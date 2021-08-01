@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hello World</title>
+    <url>/2021/07/29/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Docker 部署 ThinkPHP 5.x 容器</title>
+    <url>/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/</url>
+    <content><![CDATA[<h3 id="构建-Dockerfile-文件"><a href="#构建-Dockerfile-文件" class="headerlink" title="构建 Dockerfile 文件"></a>构建 Dockerfile 文件</h3><p>在<a href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用 Docker 部署 thinkphp 项目</a>中，作者介绍了三点注意事项：</p>
+<blockquote>
+<ol>
+<li>thinkphp 的入口文件在 public 目录下，所以需要将<code>VirtualHost</code>的<code>DocumentRoot</code>指向 public 目录；</li>
+<li>thinkphp 需要设置伪静态，Apache 需要加载<code>mod_rewrite.so</code>模块；</li>
+<li>下载相应版本的 thinkphp 放到项目根目录下。</li>
+</ol>
+</blockquote>
+<p>并给出了如下的 Dockerfile 配置：</p>
+<span id="more"></span>
+
+<figure class="highlight docker"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">21</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/\/var\/www\/html/\/var\/www\/html\/public/g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -OL https://github.com/top-think/framework/archive/v<span class="variable">$THINKPHP_VERSION</span>.tar.gz \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar xvf v<span class="variable">$THINKPHP_VERSION</span>.tar.gz &amp;&amp; mv framework-<span class="variable">$THINKPHP_VERSION</span> thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
+
+<p>不过需要注意到，在仓库 <a href="https://github.com/top-think/framework.git">https://github.com/top-think/framework.git</a> 中，<strong>只提供了 thinkphp 框架，并没有提供相应的 Web 开发框架</strong>，而这可以在仓库 <a href="https://gitee.com/liu21st/thinkphp.git">https://gitee.com/liu21st/thinkphp.git</a> 中找到。</p>
+<p>据此，修改后的 Dockerfile 配置为：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sed -i <span class="string">&#x27;s/deb.debian.org\|security.debian.org/mirrors.tuna.tsing.edu.cn/g&#x27;</span> /etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="bash">	apt update &amp;&amp; apt install -y git</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">22</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s#/var/www/html#/var/www/html/tp5/public#g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/thinkphp.git ./tp5 &amp;&amp; \</span></span><br><span class="line"><span class="bash">    git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://github.com/top-think/framework.git ./tp5/thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
+
+<p>主要修改的地方有：</p>
+<ul>
+<li>第 3-4 行：将官方 apt 源修改为清华镜像源，并下载 git 工具</li>
+<li>第 10 行：修改<code>DocumentRoot</code>指向的<code>public</code> 目录位置</li>
+<li>第 12-13 行：拉取 ThinkPHP 5.0.22 的 <code>public</code> 等文件和 <code>thinkphp</code> 框架</li>
+</ul>
+<h3 id="创建并运行-ThinkPHP-容器"><a href="#创建并运行-ThinkPHP-容器" class="headerlink" title="创建并运行 ThinkPHP 容器"></a>创建并运行 ThinkPHP 容器</h3><p>基于 Dockerfile 文件，可以构建如下的 shell 脚本文件 <code>run-tp5.sh</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">THINKPHP_VERSION=5.0.22</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker image ls | grep -v local/thinkphp:v$&#123;THINKPHP_VERSION&#125;) ]]; then</span><br><span class="line">	echo &quot;create local image &#x27;local/thinkphp:v$&#123;THINKPHP_VERSION&#125;&#x27;&quot;</span><br><span class="line">	docker build -f &lt;path-to-Dockerfile&gt; -t local/thinkphp:v$&#123;THINKPHP_VERSION&#125; .</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker container ls | grep -v mytp5) ]]; then</span><br><span class="line">	echo &quot;create container &#x27;mytp5&#x27;&quot;</span><br><span class="line">	docker create -p 8080:80 --name mytp5 local/thinkphp:v$&#123;THINKPHP_VERSION&#125;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker ps | grep -v mytp5 )]]; then</span><br><span class="line">	echo &quot;run conatiner &#x27;mytp5&#x27;&quot;</span><br><span class="line">	docker start mytp5</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;container &#x27;mytp5&#x27; has started&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>run-tp5.sh</code> 脚本主要做了三件事：</p>
+<ol>
+<li>基于 <code>Dockerfile</code> 文件在当前目录创建本地镜像 <code>local/thinkphp:v5.0.22</code></li>
+<li>基于本地镜像 <code>local/thinkphp:v5.0.22</code> 创建容器 <code>mytp5</code>，并将容器内部端口 80 映射为外部端口 8080</li>
+<li>运行容器 <code>mytp5</code></li>
+</ol>
+<p>容器启动后，运行命令 <code>docker exec -it mytp5 /bin/bash</code> 便可以进入容器内部，修改 ThinkPHP 容器配置。</p>
+<p>在浏览器中访问地址<code>127.0.0.1:8080</code>，看到如下欢迎界面表明 ThinkPHP 服务部署成功。</p>
+<p><img src="/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/thinkphp-5.0.22.png"></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>如果在项目中用到了 <code>mysql</code> 等扩展，则需要使用 <code>docker-php-ext-install</code> 命令安装相应的扩展，在 Dockerfile 中添加如下代码：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 postgresql 扩展</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y libpq-dev \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-configure pgsql -with-pgsql=/usr/<span class="built_in">local</span>/pgsql \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-install pdo pdo_pgsql</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装mysql扩展</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> docker-php-ext-install pdo pdo_mysql</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ol>
+<li><a href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用Docker部署thinkphp项目</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>ThinkPHP5.x</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 GitHub 搭建 Hexo 博客</title>
+    <url>/2021/07/29/%E4%BD%BF%E7%94%A8-GitHub-%E6%90%AD%E5%BB%BA-Hexo-%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h3 id="使用-Github-空间搭建-Hexo-技术博客"><a href="#使用-Github-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Github 空间搭建 Hexo 技术博客"></a>使用 Github 空间搭建 Hexo 技术博客</h3><ol>
+<li><a href="https://blog.csdn.net/wugenqiang/article/details/88373385">使用 Github 空间搭建 Hexo 技术博客</a></li>
+<li><a href="https://blog.csdn.net/qq_41907993/article/details/104387191?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-1.readhide&spm=1001.2101.3001.4242">个人博客搭建——基于HEXO框架</a></li>
+</ol>
+<h3 id="使用-Gitee-空间搭建-Hexo-技术博客"><a href="#使用-Gitee-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Gitee 空间搭建 Hexo 技术博客"></a>使用 Gitee 空间搭建 Hexo 技术博客</h3><ol>
+<li><a href="https://telcruel.gitee.io/2020/02/13/Hexo/">Hexo + Gitee 博客搭建</a></li>
+</ol>
+<h3 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h3><ol>
+<li><a href="https://wugenqiang.github.io/articles/hexo-do-optimization.html">Hexo+NexT+Gemini 搭建博客拥抱舒爽</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>github</tag>
+      </tags>
+  </entry>
+</search>

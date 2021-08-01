@@ -17,15 +17,15 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"clinale.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"clinale.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="Clinale&#39;s Blog">
 <meta property="og:url" content="http://clinale.github.io/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Clinale&#39;s Blog">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:author" content="John Doe">
+<meta property="article:author" content="Clinale">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://clinale.github.io/">
@@ -41,7 +41,7 @@
   };
 </script>
 
-  <title>Hexo</title>
+  <title>Clinale's Blog</title>
   
 
 
@@ -92,13 +92,14 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
+      <h1 class="site-title">Clinale's Blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -113,16 +114,53 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
         <li class="menu-item menu-item-archives">
 
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -148,13 +186,13 @@
     <link itemprop="mainEntityOfPage" href="http://clinale.github.io/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
       <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="Clinale's Blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -168,9 +206,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-07-29 20:45:36 / 修改时间：21:57:47" itemprop="dateCreated datePublished" datetime="2021-07-29T20:45:36+08:00">2021-07-29</time>
+              <time title="创建时间：2021-07-29 20:45:36" itemprop="dateCreated datePublished" datetime="2021-07-29T20:45:36+08:00">2021-07-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-01 12:18:14" itemprop="dateModified" datetime="2021-08-01T12:18:14+08:00">2021-08-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+                </span>
             </span>
 
           
@@ -193,37 +246,14 @@
 </ol>
 </blockquote>
 <p>并给出了如下的 Dockerfile 配置：</p>
-<figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">21</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/\/var\/www\/html/\/var\/www\/html\/public/g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -OL https://github.com/top-think/framework/archive/v<span class="variable">$THINKPHP_VERSION</span>.tar.gz \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar xvf v<span class="variable">$THINKPHP_VERSION</span>.tar.gz &amp;&amp; mv framework-<span class="variable">$THINKPHP_VERSION</span> thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
-
-<p>不过需要注意到，在仓库 <a target="_blank" rel="noopener" href="https://github.com/top-think/framework.git">https://github.com/top-think/framework.git</a> 中，<strong>只提供了 thinkphp 框架，并没有提供相应的 Web 开发框架</strong>，而这可以在仓库 <a target="_blank" rel="noopener" href="https://gitee.com/liu21st/thinkphp.git">https://gitee.com/liu21st/thinkphp.git</a> 中找到。</p>
-<p>据此，修改后的 Dockerfile 配置为：</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sed -i <span class="string">&#x27;s/deb.debian.org\|security.debian.org/mirrors.tuna.tsing.edu.cn/g&#x27;</span> /etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="bash">	apt update &amp;&amp; apt install -y git</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">22</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s#/var/www/html#/var/www/html/tp5/public#g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/thinkphp.git ./tp5 &amp;&amp; \</span></span><br><span class="line"><span class="bash">    git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://github.com/top-think/framework.git ./tp5/thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
-
-<p>主要修改的地方有：</p>
-<ul>
-<li>第 3-4 行：将官方 apt 源修改为清华镜像源，并下载 git 工具</li>
-<li>第 10 行：修改<code>DocumentRoot</code>指向的<code>public</code> 目录位置</li>
-<li>第 12-13 行：拉取 ThinkPHP 5.0.22 的 <code>public</code> 等文件和 <code>thinkphp</code> 框架</li>
-</ul>
-<h3 id="创建并运行-ThinkPHP-容器"><a href="#创建并运行-ThinkPHP-容器" class="headerlink" title="创建并运行 ThinkPHP 容器"></a>创建并运行 ThinkPHP 容器</h3><p>基于 Dockerfile 文件，可以构建如下的 shell 脚本文件 <code>run-tp5.sh</code>：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">THINKPHP_VERSION=5.0.22</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker image ls | grep -v local/thinkphp:v$&#123;THINKPHP_VERSION&#125;) ]]; then</span><br><span class="line">	echo &quot;create local image &#x27;local/thinkphp:v$&#123;THINKPHP_VERSION&#125;&#x27;&quot;</span><br><span class="line">	docker build -f &lt;path-to-Dockerfile&gt; -t local/thinkphp:v$&#123;THINKPHP_VERSION&#125; .</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker container ls | grep -v mytp5) ]]; then</span><br><span class="line">	echo &quot;create container &#x27;mytp5&#x27;&quot;</span><br><span class="line">	docker create -p 8080:80 --name mytp5 local/thinkphp:v$&#123;THINKPHP_VERSION&#125;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker ps | grep -v mytp5 )]]; then</span><br><span class="line">	echo &quot;run conatiner &#x27;mytp5&#x27;&quot;</span><br><span class="line">	docker start mytp5</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;container &#x27;mytp5&#x27; has started&quot;</span><br></pre></td></tr></table></figure>
-
-<p><code>run-tp5.sh</code> 脚本主要做了三件事：</p>
-<ol>
-<li>基于 <code>Dockerfile</code> 文件在当前目录创建本地镜像 <code>local/thinkphp:v5.0.22</code></li>
-<li>基于本地镜像 <code>local/thinkphp:v5.0.22</code> 创建容器 <code>mytp5</code>，并将容器内部端口 80 映射为外部端口 8080</li>
-<li>运行容器 <code>mytp5</code></li>
-</ol>
-<p>容器启动后，运行命令 <code>docker exec -it mytp5 /bin/bash</code> 便可以进入容器内部，修改 ThinkPHP 容器配置。</p>
-<p>在浏览器中访问地址<code>127.0.0.1:8080</code>，看到如下欢迎界面表明 ThinkPHP 服务部署成功。</p>
-<p><img src="/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/thinkphp-5.0.22.png"></p>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>如果在项目中用到了 <code>mysql</code> 等扩展，则需要使用 <code>docker-php-ext-install</code> 命令安装相应的扩展，在 Dockerfile 中添加如下代码：</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 postgresql 扩展</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y libpq-dev \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-configure pgsql -with-pgsql=/usr/<span class="built_in">local</span>/pgsql \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-install pdo pdo_pgsql</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装mysql扩展</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> docker-php-ext-install pdo pdo_mysql</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用Docker部署thinkphp项目</a></li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -245,13 +275,13 @@
     <link itemprop="mainEntityOfPage" href="http://clinale.github.io/2021/07/29/%E4%BD%BF%E7%94%A8-GitHub-%E6%90%AD%E5%BB%BA-Hexo-%E5%8D%9A%E5%AE%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
       <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="Clinale's Blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -265,9 +295,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-07-29 16:39:19 / 修改时间：20:52:55" itemprop="dateCreated datePublished" datetime="2021-07-29T16:39:19+08:00">2021-07-29</time>
+              <time title="创建时间：2021-07-29 16:39:19" itemprop="dateCreated datePublished" datetime="2021-07-29T16:39:19+08:00">2021-07-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-01 12:18:53" itemprop="dateModified" datetime="2021-08-01T12:18:53+08:00">2021-08-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hexo/" itemprop="url" rel="index"><span itemprop="name">hexo</span></a>
+                </span>
             </span>
 
           
@@ -310,77 +355,16 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://clinale.github.io/2021/07/29/My-New-Post/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/29/My-New-Post/" class="post-title-link" itemprop="url">My New Post</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-07-29 15:53:25 / 修改时间：20:44:03" itemprop="dateCreated datePublished" datetime="2021-07-29T15:53:25+08:00">2021-07-29</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>This is <strong>My New Post</strong> !<br>Hello World.</p>
-<h3 id="Section-1"><a href="#Section-1" class="headerlink" title="Section 1"></a>Section 1</h3><h4 id="section-1-1"><a href="#section-1-1" class="headerlink" title="section 1.1"></a>section 1.1</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> python -c `<span class="built_in">print</span>(<span class="string">&quot;hello world&quot;</span>)`</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Section-2"><a href="#Section-2" class="headerlink" title="Section 2"></a>Section 2</h3><h4 id="section-2-1"><a href="#section-2-1" class="headerlink" title="section 2.1"></a>section 2.1</h4>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://clinale.github.io/2021/07/29/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
       <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="Clinale's Blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -495,7 +479,9 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
+    <img class="site-author-image" itemprop="image" alt="Clinale"
+      src="/images/yuanshen.jpg">
+  <p class="site-author-name" itemprop="name">Clinale</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -503,16 +489,32 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
-      <div class="site-state-item site-state-tags">
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
         <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Clinale" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Clinale" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2362465844@qq.com" title="E-Mail → 2362465844@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
 
 
 
@@ -539,7 +541,7 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">2021 by Clinale</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
@@ -578,6 +580,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
