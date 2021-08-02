@@ -36,7 +36,7 @@
 
 <p>不过需要注意到，在仓库 <a href="https://github.com/top-think/framework.git">https://github.com/top-think/framework.git</a> 中，<strong>只提供了 thinkphp 框架，并没有提供相应的 Web 开发框架</strong>，而这可以在仓库 <a href="https://gitee.com/liu21st/thinkphp.git">https://gitee.com/liu21st/thinkphp.git</a> 中找到。</p>
 <p>据此，修改后的 Dockerfile 配置为：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sed -i <span class="string">&#x27;s/deb.debian.org\|security.debian.org/mirrors.tuna.tsing.edu.cn/g&#x27;</span> /etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="bash">	apt update &amp;&amp; apt install -y git</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">22</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s#/var/www/html#/var/www/html/tp5/public#g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/thinkphp.git ./tp5 &amp;&amp; \</span></span><br><span class="line"><span class="bash">    git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://github.com/top-think/framework.git ./tp5/thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sed -i <span class="string">&#x27;s/deb.debian.org\|security.debian.org/mirrors.tuna.tsing.edu.cn/g&#x27;</span> /etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="bash">	apt update &amp;&amp; apt install -y git</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">22</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s#/var/www/html#/var/www/html/tp5/public#g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/thinkphp.git ./tp5 &amp;&amp; \</span></span><br><span class="line"><span class="bash">    git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/framework.git ./tp5/thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
 
 <p>主要修改的地方有：</p>
 <ul>
@@ -67,8 +67,8 @@
         <category>Docker</category>
       </categories>
       <tags>
-        <tag>Docker</tag>
-        <tag>ThinkPHP5.x</tag>
+        <tag>docker</tag>
+        <tag>thinkPHP5.x</tag>
       </tags>
   </entry>
   <entry>
@@ -83,14 +83,14 @@
 </ol>
 <h3 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h3><ol>
 <li><a href="https://wugenqiang.github.io/articles/hexo-do-optimization.html">Hexo+NexT+Gemini 搭建博客拥抱舒爽</a></li>
+<li><a href="http://yearito.cn/posts/hexo-theme-beautify.html">Hexo 搭建个人博客系列：主题美化篇</a></li>
 </ol>
 ]]></content>
       <categories>
-        <category>hexo</category>
+        <category>Hexo</category>
       </categories>
       <tags>
         <tag>hexo</tag>
-        <tag>github</tag>
       </tags>
   </entry>
 </search>
