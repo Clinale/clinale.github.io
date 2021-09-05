@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"clinale.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SM4 分组密码算法简介">
+<meta property="og:url" content="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Clinale&#39;s Blog">
+<meta property="og:description" content="SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/S%20盒.png">
+<meta property="article:published_time" content="2021-09-05T06:56:29.000Z">
+<meta property="article:modified_time" content="2021-09-05T11:57:01.596Z">
+<meta property="article:author" content="Clinale">
+<meta property="article:tag" content="SM4 算法">
+<meta property="article:tag" content="分组密码算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/S%20盒.png">
+
+<link rel="canonical" href="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>SM4 分组密码算法简介 | Clinale's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Clinale's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SM4 分组密码算法简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-09-05 14:56:29 / 修改时间：19:57:01" itemprop="dateCreated datePublished" datetime="2021-09-05T14:56:29+08:00">2021-09-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">国密算法</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。</p>
+<span id="more"></span>
+<p align="center">表 1 SM4 与 AES 算法比较</p>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">算法</th>
+<th style="text-align:center">加密轮数</th>
+<th style="text-align:center">密钥长度（比特）</th>
+<th style="text-align:center">分组长度（比特）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">SM4</td>
+<td style="text-align:center">32</td>
+<td style="text-align:center">128</td>
+<td style="text-align:center">128</td>
+</tr>
+<tr>
+<td style="text-align:center">AES-128</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">128</td>
+<td style="text-align:center">128</td>
+</tr>
+<tr>
+<td style="text-align:center">AES-192</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">192</td>
+<td style="text-align:center">128</td>
+</tr>
+<tr>
+<td style="text-align:center">AES-256</td>
+<td style="text-align:center">14</td>
+<td style="text-align:center">256</td>
+<td style="text-align:center">128</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="SM4-加密算法"><a href="#SM4-加密算法" class="headerlink" title="SM4 加密算法"></a>SM4 加密算法</h4><p>为了方便说明，本文定义 $Z_2^m$ 表示 $m$ 比特向量，符号 $\oplus$ 表示异或运算。设明文输入为 $X = \left(X_0,X_1,X_2,X_3\right) \in \left(Z_2^{32}\right)^4$ ，密文输出为 $Y = \left(Y_0,Y_1,Y_2,Y_3\right) \in \left(Z_2^{32}\right)^4$ ，轮密钥为 $rk_i \in Z_2^{32}, i=0,1,\dots,31$ ，则 SM4 加密算法表示为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+X_{i+4} &= F\left(X_i,X_{i+1},X_{i+2},X_{i+3},rk_i\right) \\
+       &= X_i \oplus T\left(X_{i+1} \oplus X_{i+2} \oplus X_{i+3} \oplus rk_i \right) \quad i=0,1,\dots,31\\ \\
+Y &= \left(Y_0,Y_1,Y_2,Y_3\right) = \left(X_{35},X_{34},X_{33},X_{32}\right)
+\end{aligned}</script><p>其中，$T$ 是一个 $Z_2^{32} \to Z_2^{32}$ 的合成变换，包含线性变换 $L$ 和 非线性变换 $\tau$ ，即：$T(x) = L(\tau(x))$ 。</p>
+<ol>
+<li><p>非线性变换 $\tau$ 由 4 个并行的 8 进 8 出的 S 盒查表组成，设输入为 $x=(x_0,x_1,x_2,x_3) \in (Z_2^8)^4$ ，输出为 $y=(y_0,y_1,y_2,y_3) \in (Z_2^8)^4$ ，则：</p>
+<script type="math/tex; mode=display">
+(y_0,y_1,y_2,y_3) = \tau(x)=(S(x_0),S(x_1),S(x_2),S(x_3))</script><p>对于 S 盒的 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表中对应行列所对应的    值。S 盒如图 1 所示：</p>
+<p><img src="/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/S 盒.png" alt="image-20210905154433201"></p>
+<p align="center">图 1 S 盒</p>
+</li>
+<li><p>线性变换 $L$ 接收非线性变换 $\tau$ 的输出作为输入，设线性变换 $L$ 的输出为 $z \in Z_2^{32}$ ，则：</p>
+<script type="math/tex; mode=display">
+z=L(y) = y \oplus (y \lll 2) \oplus (y \lll 10) \oplus (y \lll 18) \oplus (y \lll 24)</script><p>其中，$\lll$ 表示循环左移，如 $y \lll 2$ 表示将 $y$ 循环左移 2 位。</p>
+</li>
+</ol>
+<h4 id="SM4-密钥扩展算法"><a href="#SM4-密钥扩展算法" class="headerlink" title="SM4 密钥扩展算法"></a>SM4 密钥扩展算法</h4><p>SM4 算法使用密钥扩展算法对初始密钥进行扩展生成各轮子密钥。令初始密钥表示为 $MK=(MK_0,MK_1,MK_2,MK_3) \in (Z_2^{32})^4$ ，则按如下方式生成 32 轮子密钥：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(K_0,K_1,K_2,K_3) &= (MK_0 \oplus FK_0,MK_1 \oplus FK_1,MK_2 \oplus FK_2,MK_3 \oplus FK_3) \\
+rk_i = K_{i+4} &= K_i \oplus T^{\prime}(K_{i+1} \oplus K_{i+2} \oplus K_{i+3} \oplus CK_i) \quad i=0,1,\dots,31
+\end{aligned}</script><p>其中：</p>
+<ol>
+<li><p>$T^{\prime} = L^{\prime}(\tau(\cdot))$ ，$L^{\prime}$ 表示为：</p>
+<script type="math/tex; mode=display">
+L^{\prime}(B) = B \oplus (B \lll 13) \oplus (B \lll 23)</script></li>
+<li><p>$FK$ 是系统参数，取值为：</p>
+<script type="math/tex; mode=display">FK_0 = (A3B1BAC6), FK_1 = (56AA3350)</script><script type="math/tex; mode=display">FK_2 = (677D9197),FK_3 = (B27022DC)</script></li>
+<li><p>$CK$ 是固定参数，其构造方法为：</p>
+<p>设 $CK_{i}$ 的第 $j$ 个字节为 $ck_{i,j} i=0,1,\dots,31; j=0,1,2,3$ ，即 $CK_i = (ck_{i,0}, ck_{i,1}, ck_{i,2}, ck_{i,3}) \in (Z_2^8)^4$ ，那么有：</p>
+<script type="math/tex; mode=display">
+ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算出所有的 $CK$ 值，即：</p>
+<blockquote>
+<p>00070E15, 1C232A31, 383F464D, 545B6269,</p>
+<p>70777E85, 8C939AA1, A8AFB6BD, C4CBD2D9,</p>
+<p>E0E7EEF5, FC030A11, 181F262D, 343B4249,</p>
+<p>50575E65, 6C737A81, 888F969D, A4ABB2B9,</p>
+<p>C0C7CED5, DCE3EAF1, F8FF060D, 141B2229,</p>
+<p>30373E45, 4C535A61, 686F767D, 848B9299,</p>
+<p>A0A7AEB5, BCC3CAD1, D8DFE6ED, F4FB0209,</p>
+<p>10171E25, 2C333A41, 484F565D, 646B7279</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p>[1] <a href="/download/SM4分组密码算法.pdf">SM4 分组密码算法</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SM4-%E7%AE%97%E6%B3%95/" rel="tag"># SM4 算法</a>
+              <a href="/tags/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/" rel="tag"># 分组密码算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/23/Go%E8%AF%AD%E8%A8%80-%E5%8F%98%E9%87%8F/" rel="prev" title="Go语言结构">
+      <i class="fa fa-chevron-left"></i> Go语言结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/05/%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/" rel="next" title="常用公式">
+      常用公式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#SM4-%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">SM4 加密算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SM4-%E5%AF%86%E9%92%A5%E6%89%A9%E5%B1%95%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">SM4 密钥扩展算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">3.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Clinale"
+      src="/images/yuanshen.jpg">
+  <p class="site-author-name" itemprop="name">Clinale</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Clinale" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Clinale" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2362465844@qq.com" title="E-Mail → 2362465844@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">2021 by Clinale</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
