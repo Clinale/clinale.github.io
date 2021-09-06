@@ -20,23 +20,26 @@
     var CONFIG = {"hostname":"clinale.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。">
+  <meta name="description" content="SM4-Sbox 结构SM4-Sbox 查找表如图 1 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。  图 1 SM4-Sbox 结构">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SM4 分组密码算法简介">
-<meta property="og:url" content="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:title" content="SM4 与 AES 算法 S 盒的关系">
+<meta property="og:url" content="http://clinale.github.io/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/index.html">
 <meta property="og:site_name" content="Clinale&#39;s Blog">
-<meta property="og:description" content="SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。">
+<meta property="og:description" content="SM4-Sbox 结构SM4-Sbox 查找表如图 1 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。  图 1 SM4-Sbox 结构">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/S%20盒.png">
-<meta property="article:published_time" content="2021-09-05T06:56:29.000Z">
-<meta property="article:modified_time" content="2021-09-05T12:08:24.134Z">
+<meta property="og:image" content="http://clinale.github.io/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/SM4-Sbox.png">
+<meta property="og:image" content="http://clinale.github.io/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/AES-Sbox.png">
+<meta property="article:published_time" content="2021-09-06T10:07:55.000Z">
+<meta property="article:modified_time" content="2021-09-06T10:37:49.176Z">
 <meta property="article:author" content="Clinale">
 <meta property="article:tag" content="SM4 算法">
-<meta property="article:tag" content="分组密码算法">
+<meta property="article:tag" content="AES 算法">
+<meta property="article:tag" content="S 盒">
+<meta property="article:tag" content="有限域">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/S%20盒.png">
+<meta name="twitter:image" content="http://clinale.github.io/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/SM4-Sbox.png">
 
-<link rel="canonical" href="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/">
+<link rel="canonical" href="http://clinale.github.io/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/">
 
 
 <script id="page-configurations">
@@ -49,7 +52,7 @@
   };
 </script>
 
-  <title>SM4 分组密码算法简介 | Clinale's Blog</title>
+  <title>SM4 与 AES 算法 S 盒的关系 | Clinale's Blog</title>
   
 
 
@@ -192,7 +195,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="http://clinale.github.io/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/yuanshen.jpg">
@@ -205,7 +208,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          SM4 分组密码算法简介
+          SM4 与 AES 算法 S 盒的关系
         </h1>
 
         <div class="post-meta">
@@ -216,7 +219,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-09-05 14:56:29 / 修改时间：20:08:24" itemprop="dateCreated datePublished" datetime="2021-09-05T14:56:29+08:00">2021-09-05</time>
+              <time title="创建时间：2021-09-06 18:07:55 / 修改时间：18:37:49" itemprop="dateCreated datePublished" datetime="2021-09-06T18:07:55+08:00">2021-09-06</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -239,96 +242,82 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。</p>
-<span id="more"></span>
-<p align="center">表 1 SM4 与 AES 算法比较</p>
+        <h4 id="SM4-Sbox-结构"><a href="#SM4-Sbox-结构" class="headerlink" title="SM4-Sbox 结构"></a>SM4-Sbox 结构</h4><p>SM4-Sbox 查找表如图 1 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。</p>
+<p><img src="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/SM4-Sbox.png" alt="image-20210906173135105"></p>
+<p align="center">图 1 SM4-Sbox 结构</p>
 
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">算法</th>
-<th style="text-align:center">加密轮数</th>
-<th style="text-align:center">密钥长度（比特）</th>
-<th style="text-align:center">分组长度（比特）</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">SM4</td>
-<td style="text-align:center">32</td>
-<td style="text-align:center">128</td>
-<td style="text-align:center">128</td>
-</tr>
-<tr>
-<td style="text-align:center">AES-128</td>
-<td style="text-align:center">10</td>
-<td style="text-align:center">128</td>
-<td style="text-align:center">128</td>
-</tr>
-<tr>
-<td style="text-align:center">AES-192</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">192</td>
-<td style="text-align:center">128</td>
-</tr>
-<tr>
-<td style="text-align:center">AES-256</td>
-<td style="text-align:center">14</td>
-<td style="text-align:center">256</td>
-<td style="text-align:center">128</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h4 id="SM4-加密算法"><a href="#SM4-加密算法" class="headerlink" title="SM4 加密算法"></a>SM4 加密算法</h4><p>为了方便说明，本文定义 $Z_2^m$ 表示 $m$ 比特向量，符号 $\oplus$ 表示异或运算。设明文输入为 $X = \left(X_0,X_1,X_2,X_3\right) \in \left(Z_2^{32}\right)^4$ ，密文输出为 $Y = \left(Y_0,Y_1,Y_2,Y_3\right) \in \left(Z_2^{32}\right)^4$ ，轮密钥为 $rk_i \in Z_2^{32}, i=0,1,\dots,31$ ，则 SM4 加密算法表示为：</p>
+<span id="more"></span>
+<p>经过 LiuF 等人<a href="#ref1"><sup>[1]</sup></a>的分析验证，SM4-Sbox 的代数表达式为：</p>
 <script type="math/tex; mode=display">
-\begin{aligned}
-X_{i+4} &= F\left(X_i,X_{i+1},X_{i+2},X_{i+3},rk_i\right) \\
-       &= X_i \oplus T\left(X_{i+1} \oplus X_{i+2} \oplus X_{i+3} \oplus rk_i \right) \quad i=0,1,\dots,31\\ \\
-Y &= \left(Y_0,Y_1,Y_2,Y_3\right) = \left(X_{35},X_{34},X_{33},X_{32}\right)
-\end{aligned}</script><p>其中，$T$ 是一个 $Z_2^{32} \to Z_2^{32}$ 的合成变换，包含线性变换 $L$ 和 非线性变换 $\tau$ ，即：$T(x) = L(\tau(x))$ 。</p>
-<ol>
-<li><p>非线性变换 $\tau$ 由 4 个并行的 8 进 8 出的 S 盒查表组成，设输入为 $x=(x_0,x_1,x_2,x_3) \in (Z_2^8)^4$ ，输出为 $y=(y_0,y_1,y_2,y_3) \in (Z_2^8)^4$ ，则：</p>
+S_{SM4}(x) = A_{SM4}*I_{SM4}(A_{SM4}*x+C_{SM4})+C_{SM4} \tag{1}</script><p>其中，非线性运算 $I_{SM4}(x)$ 为有限域 $GF(2^8)$ 上的求逆运算，所用的素多项式为：</p>
 <script type="math/tex; mode=display">
-(y_0,y_1,y_2,y_3) = \tau(x)=(S(x_0),S(x_1),S(x_2),S(x_3))</script><p>对于 S 盒的 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表中对应行列所对应的    值。S 盒如图 1 所示：</p>
-<p><img src="/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/S 盒.png" alt="image-20210905154433201"></p>
-<p align="center">图 1 S 盒</p>
-</li>
-<li><p>线性变换 $L$ 接收非线性变换 $\tau$ 的输出作为输入，设线性变换 $L$ 的输出为 $z \in Z_2^{32}$ ，则：</p>
+F(x) = x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1</script><p>列向量 $C_{SM4}$ 为：</p>
 <script type="math/tex; mode=display">
-z=L(y) = y \oplus (y \lll 2) \oplus (y \lll 10) \oplus (y \lll 18) \oplus (y \lll 24)</script><p>其中，$\lll$ 表示循环左移，如 $y \lll 2$ 表示将 $y$ 循环左移 2 位。</p>
-</li>
-</ol>
-<h4 id="SM4-密钥扩展算法"><a href="#SM4-密钥扩展算法" class="headerlink" title="SM4 密钥扩展算法"></a>SM4 密钥扩展算法</h4><p>SM4 算法使用密钥扩展算法对初始密钥进行扩展生成各轮子密钥。令初始密钥表示为 $MK=(MK_0,MK_1,MK_2,MK_3) \in (Z_2^{32})^4$ ，则按如下方式生成 32 轮子密钥：</p>
+C_{SM4}=\begin{pmatrix}
+1 & 1 & 0 & 1 & 0 & 0 & 1 & 1
+\end{pmatrix}^{\mathrm{T}}</script><p>循环矩阵 $A_{SM4}$ 为：</p>
 <script type="math/tex; mode=display">
-\begin{aligned}
-(K_0,K_1,K_2,K_3) &= (MK_0 \oplus FK_0,MK_1 \oplus FK_1,MK_2 \oplus FK_2,MK_3 \oplus FK_3) \\
-rk_i = K_{i+4} &= K_i \oplus T^{\prime}(K_{i+1} \oplus K_{i+2} \oplus K_{i+3} \oplus CK_i) \quad i=0,1,\dots,31
-\end{aligned}</script><p>其中：</p>
-<ol>
-<li><p>$T^{\prime} = L^{\prime}(\tau(\cdot))$ ，$L^{\prime}$ 表示为：</p>
-<script type="math/tex; mode=display">
-L^{\prime}(B) = B \oplus (B \lll 13) \oplus (B \lll 23)</script></li>
-<li><p>$FK$ 是系统参数，取值为：</p>
-<script type="math/tex; mode=display">FK_0 = (A3B1BAC6), FK_1 = (56AA3350)</script><script type="math/tex; mode=display">FK_2 = (677D9197),FK_3 = (B27022DC)</script></li>
-<li><p>$CK$ 是固定参数，其构造方法为：</p>
-<p>设 $CK_{i}$ 的第 $j$ 个字节为 $ck_{i,j} i=0,1,\dots,31; j=0,1,2,3$ ，即 $CK_i = (ck_{i,0}, ck_{i,1}, ck_{i,2}, ck_{i,3}) \in (Z_2^8)^4$ ，那么有：</p>
-<script type="math/tex; mode=display">
-ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算出所有的 $CK$ 值，即：</p>
-<blockquote>
-<p>00070E15, 1C232A31, 383F464D, 545B6269,</p>
-<p>70777E85, 8C939AA1, A8AFB6BD, C4CBD2D9,</p>
-<p>E0E7EEF5, FC030A11, 181F262D, 343B4249,</p>
-<p>50575E65, 6C737A81, 888F969D, A4ABB2B9,</p>
-<p>C0C7CED5, DCE3EAF1, F8FF060D, 141B2229,</p>
-<p>30373E45, 4C535A61, 686F767D, 848B9299,</p>
-<p>A0A7AEB5, BCC3CAD1, D8DFE6ED, F4FB0209,</p>
-<p>10171E25, 2C333A41, 484F565D, 646B7279</p>
+A_{SM4}=\begin{pmatrix}
+1 & 1 & 0 & 1 & 0 & 0 & 1 & 1 \\
+1 & 1 & 1 & 0 & 1 & 0 & 0 & 1 \\
+1 & 1 & 1 & 1 & 0 & 1 & 0 & 0 \\
+0 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\
+0 & 0 & 1 & 1 & 1 & 1 & 0 & 1 \\
+1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+0 & 1 & 0 & 0 & 1 & 1 & 1 & 1 \\
+1 & 0 & 1 & 0 & 0 & 1 & 1 & 1
+\end{pmatrix}</script><blockquote>
+<p>对于 S 盒的 8 位输入 $x \in Z_2^8$ ，将其表示为 8 位列向量 $x = (x_0,x_1,x_2,x_3,x_4,x_5,x_6,x_7)^\mathrm{T}$ ，随后将其带入 S 盒代数表达式参与 $GF(2)$ 上的运算即可。</p>
 </blockquote>
-</li>
-</ol>
-<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p>[1] <a href="/download/SM4分组密码算法.pdf">SM4 分组密码算法</a></p>
+<h4 id="AES-Sbox-结构"><a href="#AES-Sbox-结构" class="headerlink" title="AES-Sbox 结构"></a>AES-Sbox 结构</h4><p>AES-Sbox 查找表如图 2 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。</p>
+<p><img src="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/AES-Sbox.png" alt="image-20210906173135105"></p>
+<p align="center">图 2 AES-Sbox 查找表</p>
+
+<p>根据 AES 标准文档<a href="#ref2"><sup>[2]</sup></a>，AES-Sbox 的代数表达式为：</p>
+<script type="math/tex; mode=display">
+S_{AES}(x) = A_{AES}*I_{AES}(x)+C_{AES} \tag{2}</script><p>其中，非线性运算 $I_{AES}(x)$ 为有限域 $GF(2^8)$ 上的求逆运算，所用的不可约多项式为：</p>
+<script type="math/tex; mode=display">
+m(x) = x^8 + x^4 + x^3 + x + 1</script><p>列向量 $C_{AES}$ 为：</p>
+<script type="math/tex; mode=display">
+C_{AES} = \begin{pmatrix}
+ 0 & 1 & 1 & 0 & 0 & 0 & 1 & 1
+\end{pmatrix}^\mathrm{T}</script><p>循环矩阵 $A_{AES}$ 为：</p>
+<script type="math/tex; mode=display">
+A_{AES} = \begin{pmatrix}
+0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 \\
+0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 \\
+0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 1 & 1 & 0 & 0 & 0 & 1 \\
+1 & 1 & 1 & 0 & 0 & 0 & 1 & 1 \\
+1 & 1 & 0 & 0 & 0 & 1 & 1 & 1 \\
+1 & 0 & 0 & 0 & 1 & 1 & 1 & 1
+\end{pmatrix}</script><h4 id="SM4-与-AES-算法-S-盒的关系"><a href="#SM4-与-AES-算法-S-盒的关系" class="headerlink" title="SM4 与 AES 算法 S 盒的关系"></a>SM4 与 AES 算法 S 盒的关系</h4><p>由于 SM4 算法与 AES 算法的 S 盒均位于有限域 $GF(2^8)$ ，因此，两者的 S 盒存在某种映射关系，使得 SM4 算法与 AES 算法之间的 S 盒可以互相替换。</p>
+<p>假设映射矩阵 $T_{S2A}$ 将 SM4 有限域中的元素映射到 AES 有限域中，那么根据 SM4-Sbox 的代数表达式，有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+S_{SM4} &= A_{SM4} * I_{SM4}(A_{SM4} * x + C_{SM4}) + C_{SM4} \\
+        &= A_{SM4} * I_{SM4}(T_{S2A}^{-1}*T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
+        &= A_{SM4} * T_{S2A}^{-1}* I_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
+\end{aligned} \tag{3}</script><p>注意上式是如何从第 2 步变换到第 3 步的，根据文献<a href="#ref1"><sup>[1]</sup></a>可知，有限域中的求逆运算关于映射矩阵是同构的，因此把逆矩阵 $T_{S2A}^{-1}$ 从 $I_{SM4}$ 中提取出来后，此时求逆运算是在 AES 有限域上的元素进行运算的，因此在第 3 步中求逆运算由 $I_{SM4}$ 变成了 $I_{AES}$ 。</p>
+<p>由 AES-Sbox 代数表达式可知：</p>
+<script type="math/tex; mode=display">
+I_{AES}(x) = A_{AES}^{-1} * \{S_{AES}(x) + C_{AES}\}</script><p>将其带入公式 (3) 中，可得：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+S_{SM4} &= A_{SM4} * T_{S2A}^{-1}* I_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
+        &= A_{SM4} *  T_{S2A}^{-1}* A_{AES}^{-1} * \{S_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) \\
+        &\quad + C_{AES}\} + C_{SM4}
+\end{aligned} \tag{4}</script><p>令 </p>
+<script type="math/tex; mode=display">
+\begin{cases}
+M_1 = T_{S2A} \ast A_{SM4}, M_2 = A_{SM4} \ast T_{S2A}^{-1} \ast A_{AES}^{-1} \\
+C_1 = T_{S2A} \ast C_{SM4},  C_2 = M_2 \ast C_{AES} + C_{SM4}
+\end{cases}</script><p>，则有：</p>
+<script type="math/tex; mode=display">
+S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我们便得到了 SM4 与 AES 算法两者 S 盒的变换关系。</p>
+<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p><div id="ref1"></div> [1] Liu F, Ji W, Hu L, Ding JT. Analysis of the SMS4 block cipher. Australasian Conference on Information Security and Privacy. Springer, Berlin, Heidelberg, 2007: 158-170.</p>
+<p><div id="ref2"></div> [2] Pub N F. 197: Advanced encryption standard (AES). Federal information processing standards publication, 2001, 197(441): 0311.</p>
 
     </div>
 
@@ -339,7 +328,9 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/SM4-%E7%AE%97%E6%B3%95/" rel="tag"># SM4 算法</a>
-              <a href="/tags/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/" rel="tag"># 分组密码算法</a>
+              <a href="/tags/AES-%E7%AE%97%E6%B3%95/" rel="tag"># AES 算法</a>
+              <a href="/tags/S-%E7%9B%92/" rel="tag"># S 盒</a>
+              <a href="/tags/%E6%9C%89%E9%99%90%E5%9F%9F/" rel="tag"># 有限域</a>
           </div>
 
         
@@ -348,13 +339,10 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/" rel="prev" title="Docker 部署 ThinkPHP 5.x 容器">
-      <i class="fa fa-chevron-left"></i> Docker 部署 ThinkPHP 5.x 容器
+    <a href="/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/" rel="prev" title="Markdown 常用公式">
+      <i class="fa fa-chevron-left"></i> Markdown 常用公式
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/" rel="next" title="Markdown 常用公式">
-      Markdown 常用公式 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -413,7 +401,7 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#SM4-%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">SM4 加密算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SM4-%E5%AF%86%E9%92%A5%E6%89%A9%E5%B1%95%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">SM4 密钥扩展算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">3.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#SM4-Sbox-%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">SM4-Sbox 结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AES-Sbox-%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">AES-Sbox 结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SM4-%E4%B8%8E-AES-%E7%AE%97%E6%B3%95-S-%E7%9B%92%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">3.</span> <span class="nav-text">SM4 与 AES 算法 S 盒的关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
