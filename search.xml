@@ -67,6 +67,96 @@
       </tags>
   </entry>
   <entry>
+    <title>SM4 与 AES 算法 S 盒的关系</title>
+    <url>/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/</url>
+    <content><![CDATA[<h4 id="SM4-Sbox-结构"><a href="#SM4-Sbox-结构" class="headerlink" title="SM4-Sbox 结构"></a>SM4-Sbox 结构</h4><p>SM4-Sbox 查找表如图 1 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。</p>
+<p><img src="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/SM4-Sbox.png" alt="image-20210906173135105"></p>
+<p align="center">图 1 SM4-Sbox 结构</p>
+
+<span id="more"></span>
+<p>经过 LiuF 等人<a href="#ref1"><sup>[1]</sup></a>的分析验证，SM4-Sbox 的代数表达式为：</p>
+<script type="math/tex; mode=display">
+S_{SM4}(x) = A_{SM4}*I_{SM4}(A_{SM4}*x+C_{SM4})+C_{SM4} \tag{1}</script><p>其中，非线性运算 $I_{SM4}(x)$ 为有限域 $GF(2^8)$ 上的求逆运算，所用的素多项式为：</p>
+<script type="math/tex; mode=display">
+F(x) = x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1</script><p>列向量 $C_{SM4}$ 为：</p>
+<script type="math/tex; mode=display">
+C_{SM4}=\begin{pmatrix}
+1 & 1 & 0 & 1 & 0 & 0 & 1 & 1
+\end{pmatrix}^{\mathrm{T}}</script><p>循环矩阵 $A_{SM4}$ 为：</p>
+<script type="math/tex; mode=display">
+A_{SM4}=\begin{pmatrix}
+1 & 1 & 0 & 1 & 0 & 0 & 1 & 1 \\
+1 & 1 & 1 & 0 & 1 & 0 & 0 & 1 \\
+1 & 1 & 1 & 1 & 0 & 1 & 0 & 0 \\
+0 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\
+0 & 0 & 1 & 1 & 1 & 1 & 0 & 1 \\
+1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+0 & 1 & 0 & 0 & 1 & 1 & 1 & 1 \\
+1 & 0 & 1 & 0 & 0 & 1 & 1 & 1
+\end{pmatrix}</script><blockquote>
+<p>对于 S 盒的 8 位输入 $x \in Z_2^8$ ，将其表示为 8 位列向量 $x = (x_0,x_1,x_2,x_3,x_4,x_5,x_6,x_7)^\mathrm{T}$ ，随后将其带入 S 盒代数表达式参与 $GF(2)$ 上的运算即可。</p>
+</blockquote>
+<h4 id="AES-Sbox-结构"><a href="#AES-Sbox-结构" class="headerlink" title="AES-Sbox 结构"></a>AES-Sbox 结构</h4><p>AES-Sbox 查找表如图 2 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。</p>
+<p><img src="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/AES-Sbox.png" alt="image-20210906173135105"></p>
+<p align="center">图 2 AES-Sbox 查找表</p>
+
+<p>根据 AES 标准文档<a href="#ref2"><sup>[2]</sup></a>，AES-Sbox 的代数表达式为：</p>
+<script type="math/tex; mode=display">
+S_{AES}(x) = A_{AES}*I_{AES}(x)+C_{AES} \tag{2}</script><p>其中，非线性运算 $I_{AES}(x)$ 为有限域 $GF(2^8)$ 上的求逆运算，所用的不可约多项式为：</p>
+<script type="math/tex; mode=display">
+m(x) = x^8 + x^4 + x^3 + x + 1</script><p>列向量 $C_{AES}$ 为：</p>
+<script type="math/tex; mode=display">
+C_{AES} = \begin{pmatrix}
+ 0 & 1 & 1 & 0 & 0 & 0 & 1 & 1
+\end{pmatrix}^\mathrm{T}</script><p>循环矩阵 $A_{AES}$ 为：</p>
+<script type="math/tex; mode=display">
+A_{AES} = \begin{pmatrix}
+0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 \\
+0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 \\
+0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 1 & 1 & 0 & 0 & 0 & 1 \\
+1 & 1 & 1 & 0 & 0 & 0 & 1 & 1 \\
+1 & 1 & 0 & 0 & 0 & 1 & 1 & 1 \\
+1 & 0 & 0 & 0 & 1 & 1 & 1 & 1
+\end{pmatrix}</script><h4 id="SM4-与-AES-算法-S-盒的关系"><a href="#SM4-与-AES-算法-S-盒的关系" class="headerlink" title="SM4 与 AES 算法 S 盒的关系"></a>SM4 与 AES 算法 S 盒的关系</h4><p>由于 SM4 算法与 AES 算法的 S 盒均位于有限域 $GF(2^8)$ ，因此，两者的 S 盒存在某种映射关系，使得 SM4 算法与 AES 算法之间的 S 盒可以互相替换。</p>
+<p>假设映射矩阵 $T_{S2A}$ 将 SM4 有限域中的元素映射到 AES 有限域中，那么根据 SM4-Sbox 的代数表达式，有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+S_{SM4} &= A_{SM4} * I_{SM4}(A_{SM4} * x + C_{SM4}) + C_{SM4} \\
+        &= A_{SM4} * I_{SM4}(T_{S2A}^{-1}*T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
+        &= A_{SM4} * T_{S2A}^{-1}* I_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
+\end{aligned} \tag{3}</script><p>注意上式是如何从第 2 步变换到第 3 步的，根据文献<a href="#ref1"><sup>[1]</sup></a>可知，有限域中的求逆运算关于映射矩阵是同构的，因此把逆矩阵 $T_{S2A}^{-1}$ 从 $I_{SM4}$ 中提取出来后，此时求逆运算是在 AES 有限域上的元素进行运算的，因此在第 3 步中求逆运算由 $I_{SM4}$ 变成了 $I_{AES}$ 。</p>
+<p>由 AES-Sbox 代数表达式可知：</p>
+<script type="math/tex; mode=display">
+I_{AES}(x) = A_{AES}^{-1} * \{S_{AES}(x) + C_{AES}\}</script><p>将其带入公式 (3) 中，可得：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+S_{SM4} &= A_{SM4} * T_{S2A}^{-1}* I_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
+        &= A_{SM4} *  T_{S2A}^{-1}* A_{AES}^{-1} * \{S_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) \\
+        &\quad + C_{AES}\} + C_{SM4}
+\end{aligned} \tag{4}</script><p>令 </p>
+<script type="math/tex; mode=display">
+\begin{cases}
+M_1 = T_{S2A} \ast A_{SM4}, M_2 = A_{SM4} \ast T_{S2A}^{-1} \ast A_{AES}^{-1} \\
+C_1 = T_{S2A} \ast C_{SM4},  C_2 = M_2 \ast C_{AES} + C_{SM4}
+\end{cases}</script><p>，则有：</p>
+<script type="math/tex; mode=display">
+S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我们便得到了 SM4 与 AES 算法两者 S 盒的变换关系。</p>
+<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p><div id="ref1"></div> [1] Liu F, Ji W, Hu L, Ding JT. Analysis of the SMS4 block cipher. Australasian Conference on Information Security and Privacy. Springer, Berlin, Heidelberg, 2007: 158-170.</p>
+<p><div id="ref2"></div> [2] Pub N F. 197: Advanced encryption standard (AES). Federal information processing standards publication, 2001, 197(441): 0311.</p>
+]]></content>
+      <categories>
+        <category>国密算法</category>
+      </categories>
+      <tags>
+        <tag>SM4 算法</tag>
+        <tag>AES 算法</tag>
+        <tag>S 盒</tag>
+        <tag>有限域</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker 部署 ThinkPHP 5.x 容器</title>
     <url>/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/</url>
     <content><![CDATA[<h3 id="构建-Dockerfile-文件"><a href="#构建-Dockerfile-文件" class="headerlink" title="构建 Dockerfile 文件"></a>构建 Dockerfile 文件</h3><p>在<a href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用 Docker 部署 thinkphp 项目</a>中，作者介绍了三点注意事项：</p>
@@ -112,6 +202,32 @@
       <tags>
         <tag>docker</tag>
         <tag>thinkPHP5.x</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 命令行配置 WiFi</title>
+    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
+    <content><![CDATA[<h4 id="命令行配置"><a href="#命令行配置" class="headerlink" title="命令行配置"></a>命令行配置</h4><p>在 Linux 图形界面中，有时无法连接指定 WiFi，此时在命令行中只需三步即可连接到指定 WiFi，具体如下。</p>
+<ol>
+<li><p>开启 WiFi</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扫描附近的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接到指定的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname wlan0</span><br></pre></td></tr></table></figure>
+<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码。</p>
+</li>
+</ol>
+<p>完成上面三步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>命令行</tag>
+        <tag>WiFi 配置</tag>
       </tags>
   </entry>
   <entry>
@@ -217,96 +333,6 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
       </tags>
   </entry>
   <entry>
-    <title>SM4 与 AES 算法 S 盒的关系</title>
-    <url>/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/</url>
-    <content><![CDATA[<h4 id="SM4-Sbox-结构"><a href="#SM4-Sbox-结构" class="headerlink" title="SM4-Sbox 结构"></a>SM4-Sbox 结构</h4><p>SM4-Sbox 查找表如图 1 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。</p>
-<p><img src="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/SM4-Sbox.png" alt="image-20210906173135105"></p>
-<p align="center">图 1 SM4-Sbox 结构</p>
-
-<span id="more"></span>
-<p>经过 LiuF 等人<a href="#ref1"><sup>[1]</sup></a>的分析验证，SM4-Sbox 的代数表达式为：</p>
-<script type="math/tex; mode=display">
-S_{SM4}(x) = A_{SM4}*I_{SM4}(A_{SM4}*x+C_{SM4})+C_{SM4} \tag{1}</script><p>其中，非线性运算 $I_{SM4}(x)$ 为有限域 $GF(2^8)$ 上的求逆运算，所用的素多项式为：</p>
-<script type="math/tex; mode=display">
-F(x) = x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1</script><p>列向量 $C_{SM4}$ 为：</p>
-<script type="math/tex; mode=display">
-C_{SM4}=\begin{pmatrix}
-1 & 1 & 0 & 1 & 0 & 0 & 1 & 1
-\end{pmatrix}^{\mathrm{T}}</script><p>循环矩阵 $A_{SM4}$ 为：</p>
-<script type="math/tex; mode=display">
-A_{SM4}=\begin{pmatrix}
-1 & 1 & 0 & 1 & 0 & 0 & 1 & 1 \\
-1 & 1 & 1 & 0 & 1 & 0 & 0 & 1 \\
-1 & 1 & 1 & 1 & 0 & 1 & 0 & 0 \\
-0 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\
-0 & 0 & 1 & 1 & 1 & 1 & 0 & 1 \\
-1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
-0 & 1 & 0 & 0 & 1 & 1 & 1 & 1 \\
-1 & 0 & 1 & 0 & 0 & 1 & 1 & 1
-\end{pmatrix}</script><blockquote>
-<p>对于 S 盒的 8 位输入 $x \in Z_2^8$ ，将其表示为 8 位列向量 $x = (x_0,x_1,x_2,x_3,x_4,x_5,x_6,x_7)^\mathrm{T}$ ，随后将其带入 S 盒代数表达式参与 $GF(2)$ 上的运算即可。</p>
-</blockquote>
-<h4 id="AES-Sbox-结构"><a href="#AES-Sbox-结构" class="headerlink" title="AES-Sbox 结构"></a>AES-Sbox 结构</h4><p>AES-Sbox 查找表如图 2 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。</p>
-<p><img src="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/AES-Sbox.png" alt="image-20210906173135105"></p>
-<p align="center">图 2 AES-Sbox 查找表</p>
-
-<p>根据 AES 标准文档<a href="#ref2"><sup>[2]</sup></a>，AES-Sbox 的代数表达式为：</p>
-<script type="math/tex; mode=display">
-S_{AES}(x) = A_{AES}*I_{AES}(x)+C_{AES} \tag{2}</script><p>其中，非线性运算 $I_{AES}(x)$ 为有限域 $GF(2^8)$ 上的求逆运算，所用的不可约多项式为：</p>
-<script type="math/tex; mode=display">
-m(x) = x^8 + x^4 + x^3 + x + 1</script><p>列向量 $C_{AES}$ 为：</p>
-<script type="math/tex; mode=display">
-C_{AES} = \begin{pmatrix}
- 0 & 1 & 1 & 0 & 0 & 0 & 1 & 1
-\end{pmatrix}^\mathrm{T}</script><p>循环矩阵 $A_{AES}$ 为：</p>
-<script type="math/tex; mode=display">
-A_{AES} = \begin{pmatrix}
-0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 \\
-0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 \\
-0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
-1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\
-1 & 1 & 1 & 1 & 0 & 0 & 0 & 1 \\
-1 & 1 & 1 & 0 & 0 & 0 & 1 & 1 \\
-1 & 1 & 0 & 0 & 0 & 1 & 1 & 1 \\
-1 & 0 & 0 & 0 & 1 & 1 & 1 & 1
-\end{pmatrix}</script><h4 id="SM4-与-AES-算法-S-盒的关系"><a href="#SM4-与-AES-算法-S-盒的关系" class="headerlink" title="SM4 与 AES 算法 S 盒的关系"></a>SM4 与 AES 算法 S 盒的关系</h4><p>由于 SM4 算法与 AES 算法的 S 盒均位于有限域 $GF(2^8)$ ，因此，两者的 S 盒存在某种映射关系，使得 SM4 算法与 AES 算法之间的 S 盒可以互相替换。</p>
-<p>假设映射矩阵 $T_{S2A}$ 将 SM4 有限域中的元素映射到 AES 有限域中，那么根据 SM4-Sbox 的代数表达式，有：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-S_{SM4} &= A_{SM4} * I_{SM4}(A_{SM4} * x + C_{SM4}) + C_{SM4} \\
-        &= A_{SM4} * I_{SM4}(T_{S2A}^{-1}*T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
-        &= A_{SM4} * T_{S2A}^{-1}* I_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
-\end{aligned} \tag{3}</script><p>注意上式是如何从第 2 步变换到第 3 步的，根据文献<a href="#ref1"><sup>[1]</sup></a>可知，有限域中的求逆运算关于映射矩阵是同构的，因此把逆矩阵 $T_{S2A}^{-1}$ 从 $I_{SM4}$ 中提取出来后，此时求逆运算是在 AES 有限域上的元素进行运算的，因此在第 3 步中求逆运算由 $I_{SM4}$ 变成了 $I_{AES}$ 。</p>
-<p>由 AES-Sbox 代数表达式可知：</p>
-<script type="math/tex; mode=display">
-I_{AES}(x) = A_{AES}^{-1} * \{S_{AES}(x) + C_{AES}\}</script><p>将其带入公式 (3) 中，可得：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-S_{SM4} &= A_{SM4} * T_{S2A}^{-1}* I_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) + C_{SM4} \\
-        &= A_{SM4} *  T_{S2A}^{-1}* A_{AES}^{-1} * \{S_{AES}(T_{S2A}*\{A_{SM4} * x + C_{SM4}\}) \\
-        &\quad + C_{AES}\} + C_{SM4}
-\end{aligned} \tag{4}</script><p>令 </p>
-<script type="math/tex; mode=display">
-\begin{cases}
-M_1 = T_{S2A} \ast A_{SM4}, M_2 = A_{SM4} \ast T_{S2A}^{-1} \ast A_{AES}^{-1} \\
-C_1 = T_{S2A} \ast C_{SM4},  C_2 = M_2 \ast C_{AES} + C_{SM4}
-\end{cases}</script><p>，则有：</p>
-<script type="math/tex; mode=display">
-S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我们便得到了 SM4 与 AES 算法两者 S 盒的变换关系。</p>
-<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p><div id="ref1"></div> [1] Liu F, Ji W, Hu L, Ding JT. Analysis of the SMS4 block cipher. Australasian Conference on Information Security and Privacy. Springer, Berlin, Heidelberg, 2007: 158-170.</p>
-<p><div id="ref2"></div> [2] Pub N F. 197: Advanced encryption standard (AES). Federal information processing standards publication, 2001, 197(441): 0311.</p>
-]]></content>
-      <categories>
-        <category>国密算法</category>
-      </categories>
-      <tags>
-        <tag>SM4 算法</tag>
-        <tag>AES 算法</tag>
-        <tag>S 盒</tag>
-        <tag>有限域</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo 介绍</title>
     <url>/2021/07/29/hexo-%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<h4 id="使用-Github-空间搭建-Hexo-技术博客"><a href="#使用-Github-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Github 空间搭建 Hexo 技术博客"></a>使用 Github 空间搭建 Hexo 技术博客</h4><ol>
@@ -337,32 +363,6 @@ S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我�
         <tag>hexo</tag>
         <tag>github 博客</tag>
         <tag>gitee 博客</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 命令行配置 WiFi</title>
-    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
-    <content><![CDATA[<h4 id="命令行配置"><a href="#命令行配置" class="headerlink" title="命令行配置"></a>命令行配置</h4><p>在 Linux 图形界面中，有时无法连接指定 WiFi，此时在命令行中只需三步即可连接到指定 WiFi，具体如下。</p>
-<ol>
-<li><p>开启 WiFi</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>扫描附近的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连接到指定的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname wlan0</span><br></pre></td></tr></table></figure>
-<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码。</p>
-</li>
-</ol>
-<p>完成上面三步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>命令行</tag>
-        <tag>WiFi 配置</tag>
       </tags>
   </entry>
 </search>
