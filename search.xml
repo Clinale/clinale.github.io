@@ -32,6 +32,23 @@
 <td style="text-align:left">$\div$</td>
 <td style="text-align:left"><code>\div</code></td>
 </tr>
+<tr>
+<td style="text-align:left">$\sim$</td>
+<td><code>\sim</code></td>
+<td style="text-align:left">$\approx$</td>
+<td style="text-align:left"><code>\approx</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\ll$</td>
+<td><code>\ll</code></td>
+<td style="text-align:left">$\gg$</td>
+<td style="text-align:left"><code>\gg</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\lll$</td>
+<td><code>\lll</code></td>
+<td style="text-align:left"></td>
+</tr>
 </tbody>
 </table>
 </div>
