@@ -47,6 +47,12 @@
 <tr>
 <td style="text-align:left">$\lll$</td>
 <td><code>\lll</code></td>
+<td style="text-align:left">$\mathop{\lll}\limits_{32}$</td>
+<td style="text-align:left"><code>\mathop&#123;\lll&#125;\limits_&#123;32&#125;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td></td>
 <td style="text-align:left"></td>
 </tr>
 </tbody>
@@ -54,7 +60,7 @@
 </div>
 ]]></content>
       <categories>
-        <category>MarkDown</category>
+        <category>Markdown</category>
       </categories>
       <tags>
         <tag>公式符号</tag>
@@ -331,6 +337,32 @@ S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我�
         <tag>hexo</tag>
         <tag>github 博客</tag>
         <tag>gitee 博客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 命令行配置 WiFi</title>
+    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
+    <content><![CDATA[<h4 id="命令行配置"><a href="#命令行配置" class="headerlink" title="命令行配置"></a>命令行配置</h4><p>在 Linux 图形界面中，有时无法连接指定 WiFi，此时在命令行中只需三步即可连接到指定 WiFi，具体如下。</p>
+<ol>
+<li><p>开启 WiFi</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扫描附近的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接到指定的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname wlan0</span><br></pre></td></tr></table></figure>
+<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码。</p>
+</li>
+</ol>
+<p>完成上面三步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>命令行</tag>
+        <tag>WiFi 配置</tag>
       </tags>
   </entry>
 </search>
