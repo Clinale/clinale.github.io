@@ -207,11 +207,12 @@ S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我�
   <entry>
     <title>Linux 命令行配置 WiFi</title>
     <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
-    <content><![CDATA[<p>在 Linux 中，可以使用 <em>NetworkManager</em> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
+    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
+<span id="more"></span>
 <ol>
 <li><p><span id="s1">查看网络设备列表</span></p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
-<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <em>NetworkManager</em> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
+<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
 </li>
 <li><p>开启 WiFi</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
