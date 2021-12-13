@@ -376,7 +376,7 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
     <content><![CDATA[<h4 id="开启远程登陆"><a href="#开启远程登陆" class="headerlink" title="开启远程登陆"></a>开启远程登陆</h4><ul>
 <li><p>修改 SSH 配置文件</p>
 <p>修改配置文件 <code>/etc/ssh/sshd_config</code> 以下字段：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 设置允许远程登录</span></span><br><span class="line">PasswordAuthentication yes</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增 root 远程账户</span></span><br><span class="line">AllowUsers root</span><br><span class="line">AllowUsers &lt;user&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置允许远程登录</span></span><br><span class="line">PasswordAuthentication yes</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增 root 远程账户</span></span><br><span class="line">AllowUsers root</span><br><span class="line">AllowUsers &lt;user&gt;</span><br></pre></td></tr></table></figure>
 <p>其中，<em><user></user></em> 为后续添加的其他远程登录账户。 </p>
 </li>
 <li><p>重启 SSH 服务</p>
@@ -410,7 +410,7 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
 </ul>
 <h4 id="删除远程登录账户"><a href="#删除远程登录账户" class="headerlink" title="删除远程登录账户"></a>删除远程登录账户</h4><ul>
 <li><p>修改 SSH 配置文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁用远程用户</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> AllowUsers &lt;user&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁用远程用户</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> AllowUsers &lt;user&gt;</span></span><br></pre></td></tr></table></figure>
 <p>修改配置文件后记得重启 SSH 服务。</p>
 </li>
 <li><p>删除本地用户</p>
