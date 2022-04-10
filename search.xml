@@ -1,6 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Linux 创建远程登陆用户</title>
+    <url>/2021/12/13/Linux-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7/</url>
+    <content><![CDATA[<h4 id="开启远程登陆"><a href="#开启远程登陆" class="headerlink" title="开启远程登陆"></a>开启远程登陆</h4><ul>
+<li><p>修改 SSH 配置文件</p>
+<p>修改配置文件 <code>/etc/ssh/sshd_config</code> 以下字段：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置允许远程登录</span></span><br><span class="line">PasswordAuthentication yes</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增 root 远程账户</span></span><br><span class="line">AllowUsers root</span><br><span class="line">AllowUsers &lt;user&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，<em><user></user></em> 为后续添加的其他远程登录账户。 </p>
+</li>
+<li><p>重启 SSH 服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
+<p>重启完成之后即可借助远程连接工具连接到该远程服务器。</p>
+</li>
+</ul>
+<span id="more"></span>
+<h4 id="创建远程账户"><a href="#创建远程账户" class="headerlink" title="创建远程账户"></a>创建远程账户</h4><ul>
+<li><p>创建本地用户</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">useradd -d /home/&lt;newuser&gt; -m &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，</p>
+<ul>
+<li><p><code>-d</code> 表示该用户的家目录</p>
+</li>
+<li><p><code>-m</code> 表示创建该用户的家目录</p>
+</li>
+</ul>
+</li>
+<li><p>修改用户密码</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">passwd &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
+<p>根据提示输入两次用户密码。</p>
+</li>
+<li><p>修改 SSH 配置文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增远程登录用户</span></span><br><span class="line">AllowUsers &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启 SSH 服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
+<p>操作完成后即可使用新账号登录远程服务器。</p>
+</li>
+</ul>
+<h4 id="删除远程登录账户"><a href="#删除远程登录账户" class="headerlink" title="删除远程登录账户"></a>删除远程登录账户</h4><ul>
+<li><p>修改 SSH 配置文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁用远程用户</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> AllowUsers &lt;user&gt;</span></span><br></pre></td></tr></table></figure>
+<p>修改配置文件后记得重启 SSH 服务。</p>
+</li>
+<li><p>删除本地用户</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">userdel -r &lt;user&gt;</span><br></pre></td></tr></table></figure>
+<p><code>userdel</code> 命令默认会删除 <em>/etc/passwd</em>、<em>/etc/shadow</em>、<em>/etc/group</em>、<em>/etc/gshadow</em> 四个文件里该账户和组的信息，使用 <code>-r</code> 选项递归删除该用户家目录下的用户数据。</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>创建用户</tag>
+        <tag>远程登录</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker 部署 ThinkPHP 5.x 容器</title>
     <url>/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/</url>
     <content><![CDATA[<h3 id="构建-Dockerfile-文件"><a href="#构建-Dockerfile-文件" class="headerlink" title="构建 Dockerfile 文件"></a>构建 Dockerfile 文件</h3><p>在<a href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用 Docker 部署 thinkphp 项目</a>中，作者介绍了三点注意事项：</p>
@@ -46,6 +104,37 @@
       <tags>
         <tag>docker</tag>
         <tag>thinkPHP5.x</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 命令行配置 WiFi</title>
+    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
+    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
+<span id="more"></span>
+<ol>
+<li><p><span id="s1">查看网络设备列表</span></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
+<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
+</li>
+<li><p>开启 WiFi</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扫描附近的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接到指定的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname &lt;if-dev&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码，并将 <code>&lt;if-dev&gt;</code> 替换为在<a href="#s1">第一步</a>中显示的网络设备。</p>
+</li>
+</ol>
+<p>完成上面四步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>命令行</tag>
+        <tag>WiFi 配置</tag>
       </tags>
   </entry>
   <entry>
@@ -112,95 +201,6 @@
       </categories>
       <tags>
         <tag>公式符号</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 命令行配置 WiFi</title>
-    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
-    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
-<span id="more"></span>
-<ol>
-<li><p><span id="s1">查看网络设备列表</span></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
-<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
-</li>
-<li><p>开启 WiFi</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>扫描附近的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连接到指定的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname &lt;if-dev&gt;</span><br></pre></td></tr></table></figure>
-<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码，并将 <code>&lt;if-dev&gt;</code> 替换为在<a href="#s1">第一步</a>中显示的网络设备。</p>
-</li>
-</ol>
-<p>完成上面四步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>命令行</tag>
-        <tag>WiFi 配置</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 创建远程登陆用户</title>
-    <url>/2021/12/13/Linux-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7/</url>
-    <content><![CDATA[<h4 id="开启远程登陆"><a href="#开启远程登陆" class="headerlink" title="开启远程登陆"></a>开启远程登陆</h4><ul>
-<li><p>修改 SSH 配置文件</p>
-<p>修改配置文件 <code>/etc/ssh/sshd_config</code> 以下字段：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置允许远程登录</span></span><br><span class="line">PasswordAuthentication yes</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增 root 远程账户</span></span><br><span class="line">AllowUsers root</span><br><span class="line">AllowUsers &lt;user&gt;</span><br></pre></td></tr></table></figure>
-<p>其中，<em><user></user></em> 为后续添加的其他远程登录账户。 </p>
-</li>
-<li><p>重启 SSH 服务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-<p>重启完成之后即可借助远程连接工具连接到该远程服务器。</p>
-</li>
-</ul>
-<span id="more"></span>
-<h4 id="创建远程账户"><a href="#创建远程账户" class="headerlink" title="创建远程账户"></a>创建远程账户</h4><ul>
-<li><p>创建本地用户</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">useradd -d /home/&lt;newuser&gt; -m &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
-<p>其中，</p>
-<ul>
-<li><p><code>-d</code> 表示该用户的家目录</p>
-</li>
-<li><p><code>-m</code> 表示创建该用户的家目录</p>
-</li>
-</ul>
-</li>
-<li><p>修改用户密码</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">passwd &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
-<p>根据提示输入两次用户密码。</p>
-</li>
-<li><p>修改 SSH 配置文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增远程登录用户</span></span><br><span class="line">AllowUsers &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>重启 SSH 服务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-<p>操作完成后即可使用新账号登录远程服务器。</p>
-</li>
-</ul>
-<h4 id="删除远程登录账户"><a href="#删除远程登录账户" class="headerlink" title="删除远程登录账户"></a>删除远程登录账户</h4><ul>
-<li><p>修改 SSH 配置文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁用远程用户</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> AllowUsers &lt;user&gt;</span></span><br></pre></td></tr></table></figure>
-<p>修改配置文件后记得重启 SSH 服务。</p>
-</li>
-<li><p>删除本地用户</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">userdel -r &lt;user&gt;</span><br></pre></td></tr></table></figure>
-<p><code>userdel</code> 命令默认会删除 <em>/etc/passwd</em>、<em>/etc/shadow</em>、<em>/etc/group</em>、<em>/etc/gshadow</em> 四个文件里该账户和组的信息，使用 <code>-r</code> 选项递归删除该用户家目录下的用户数据。</p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>创建用户</tag>
-        <tag>远程登录</tag>
       </tags>
   </entry>
   <entry>
@@ -291,39 +291,6 @@ S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我�
         <tag>AES 算法</tag>
         <tag>S 盒</tag>
         <tag>有限域</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo 介绍</title>
-    <url>/2021/07/29/hexo-%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h4 id="使用-Github-空间搭建-Hexo-技术博客"><a href="#使用-Github-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Github 空间搭建 Hexo 技术博客"></a>使用 Github 空间搭建 Hexo 技术博客</h4><ol>
-<li><a href="https://blog.csdn.net/wugenqiang/article/details/88373385">使用 Github 空间搭建 Hexo 技术博客</a></li>
-<li><a href="https://blog.csdn.net/qq_41907993/article/details/104387191?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-1.readhide&amp;spm=1001.2101.3001.4242">个人博客搭建——基于HEXO框架</a></li>
-</ol>
-<h4 id="使用-Gitee-空间搭建-Hexo-技术博客"><a href="#使用-Gitee-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Gitee 空间搭建 Hexo 技术博客"></a>使用 Gitee 空间搭建 Hexo 技术博客</h4><ol>
-<li><a href="https://telcruel.gitee.io/2020/02/13/Hexo/">Hexo + Gitee 博客搭建</a></li>
-</ol>
-<span id="more"></span>
-<h4 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h4><ol>
-<li><a href="https://wugenqiang.github.io/articles/hexo-do-optimization.html">Hexo+NexT+Gemini 搭建博客拥抱舒爽</a></li>
-<li><a href="http://yearito.cn/posts/hexo-theme-beautify.html">Hexo 搭建个人博客系列：主题美化篇</a></li>
-<li><a href="https://www.cnblogs.com/TechSnail/p/12933623.html">Hexo进阶设置</a></li>
-</ol>
-<h4 id="Hexo-添加本地文件下载"><a href="#Hexo-添加本地文件下载" class="headerlink" title="Hexo 添加本地文件下载"></a>Hexo 添加本地文件下载</h4><ol>
-<li><a href="https://www.dazhuanlan.com/fanhuajiantu/topics/1376769">Hexo中添加本地文件下载</a></li>
-</ol>
-<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ol>
-<li><a href="https://novnan.github.io/Hexo/hexo-draft/">Hexo 文章保存为草稿</a></li>
-<li><a href="https://sophistt.github.io/2020/07/22/mathjax-render-error-in-hexo/">Hexo Mathjax 公式渲染</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-        <tag>github 博客</tag>
-        <tag>gitee 博客</tag>
       </tags>
   </entry>
   <entry>
@@ -429,117 +396,36 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
       </tags>
   </entry>
   <entry>
-    <title>计算机基础</title>
-    <url>/2022/02/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h3 id="计算机硬件组成"><a href="#计算机硬件组成" class="headerlink" title="计算机硬件组成"></a>计算机硬件组成</h3><p>现代计算机以冯·诺伊曼结构为基础，由中央处理器（CPU）、内存、外存、输入和输出设备组成，如图 1 所示。</p>
-<p><img src="/2022/02/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/计算机硬件组成.png" alt="img"></p>
+    <title>Hexo 介绍</title>
+    <url>/2021/07/29/hexo-%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h4 id="使用-Github-空间搭建-Hexo-技术博客"><a href="#使用-Github-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Github 空间搭建 Hexo 技术博客"></a>使用 Github 空间搭建 Hexo 技术博客</h4><ol>
+<li><a href="https://blog.csdn.net/wugenqiang/article/details/88373385">使用 Github 空间搭建 Hexo 技术博客</a></li>
+<li><a href="https://blog.csdn.net/qq_41907993/article/details/104387191?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-1.readhide&amp;spm=1001.2101.3001.4242">个人博客搭建——基于HEXO框架</a></li>
+</ol>
+<h4 id="使用-Gitee-空间搭建-Hexo-技术博客"><a href="#使用-Gitee-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Gitee 空间搭建 Hexo 技术博客"></a>使用 Gitee 空间搭建 Hexo 技术博客</h4><ol>
+<li><a href="https://telcruel.gitee.io/2020/02/13/Hexo/">Hexo + Gitee 博客搭建</a></li>
+</ol>
 <span id="more"></span>
-<ul>
-<li><p>CPU 指令集分为精简指令集（RISC）和复杂指令集（CISC），ARM 指令集属于 RISC，x86 指令集属于 CISC。CPU 由<strong>控制单元（CU）</strong>和<strong>算术逻辑单元（ALU）</strong>组成。CU 是计算机的指挥系统，一般由指令寄存器、指令译码器、时序电路和控制电路组成，基本功能是从内存取指令和执行指令。ALU 则负责完成算术运算和逻辑运算。</p>
-</li>
-<li><p>内存是易失型存储器，包括动态随机存储（DRAM）、静态随机存储（SRAM）以及只读存储器（ROM），其中，SRAM 一般用于制作缓存，ROM 用来存储 BIOS 或固件程序。程序必须被加载进内存才能被执行。</p>
-</li>
-<li><p>外存是非易失型存储器，主要包括硬盘（HDD）、固态硬盘（SSD），用于永久性存储文件数据。</p>
-</li>
-<li><p>输入设备主要包括键盘、鼠标和体感设备等，输出设备包括显卡、打印机、扬声器、蓝牙耳机、投影仪等。</p>
-</li>
-<li><p>主板负责将 CPU、内存、外存、输入输出设备组织在一起。其中，CPU 通过 <strong>北桥</strong> 与内存和显存连接在一起，输入输出设备则通过 <strong>南桥</strong> 与 CPU 进行交互。主板主要提供了以下功能：</p>
-<p>1）设备 I/O 地址与 IRQ 中断请求</p>
-<p>主板负责各个电脑组件之间的通信，通过 <strong>I/O</strong> 地址识别不同的设备，一般而言，不同的设备不能共享同一个设备 I/O 地址。各个设备可以通过 <strong>IRQ 中断请求</strong> 来告知 CPU 该设备的当前状态，以方便 CPU 进行工作任务的分配。</p>
-<p>2）CMOS 与 BIOS</p>
-<p>CMOS 主要功能为 <strong>记录主板上面的重要参数</strong>，包括系统时间、CPU 电压与频率、各项设备的 I/O 地址与 IRQ 等，由于这些数据的记录要用电，因此主板上面有一块电池。BIOS 是写入到主板上某一块 flash 或 EEPROM 的程序，它可以在计算机启动的时候执行，以 <strong>加载或修改 CMOS 当中的参数，并尝试调用存储设备中的引导程序</strong>，进一步进入操作系统当中。</p>
-<p>3）连接外置设备的接口</p>
-<p>主板上面包含各种连接外置设备的接口，包括：</p>
-<ul>
-<li><p>PS/2 接口：原本是常见的键盘与鼠标的接口，逐渐被 USB 接口取代；</p>
-</li>
-<li><p>USB 接口：分为 USB2.0 和 USB3.0</p>
-</li>
-<li><p>RJ-45 网络头：负责连接网线</p>
-</li>
-<li><p>HDMI：负责连接显示屏幕，可同时传输声音与图像。</p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><p>主流操作系统分为 Windows 操作系统、Linux 操作系统、Macos 操作系统、Android 操作系统与苹果操作系统等，主要提供了如下功能：</p>
-<ul>
-<li><p>系统调用接口</p>
-<p>对硬件资源进行抽象，向上层应用程序提供一个统一的编程接口</p>
-</li>
-<li><p>进程管理</p>
-<p>支持多任务处理</p>
-</li>
-<li><p>内存管理</p>
-<p>实现内存资源的分配与回收，支持虚拟内存，当内存不足时通过硬盘交换分区实现进程切换</p>
-</li>
-<li><p>文件系统管理</p>
-<p>实现外存资源的分配与回收</p>
-</li>
-<li><p>驱动管理</p>
-<p>通过驱动程序对硬件进行管理，事先将驱动程序编译成模块，并通过操作系统提供的可加载模块功能加载到操作系统内核空间中</p>
-</li>
-</ul>
-<p>Linux 操作系统中继承了 Minix 操作系统的设计哲学，即<strong>所有的程序或系统设备都是文件</strong>。各硬件设备在 Linux 中的文件名如表 1 所示。</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th><strong>设备</strong></th>
-<th><strong>设备在 Linux 中的文件名</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SCSI、SATA、USB 磁盘驱动器</td>
-<td>/dev/sd[a-p]</td>
-</tr>
-<tr>
-<td>U 盘</td>
-<td>/dev/sd[a-p] （与 SATA 相同）</td>
-</tr>
-<tr>
-<td>Virtio 接口</td>
-<td>/dev/vd[a-p] （用于虚拟机内）</td>
-</tr>
-<tr>
-<td>软盘驱动器</td>
-<td>/dev/fd[0-7]</td>
-</tr>
-<tr>
-<td>打印机</td>
-<td>/dev/lp[0-2] （25 针打印机）<br>/dev/usb/lp[0-15] （USB 接口）</td>
-</tr>
-<tr>
-<td>鼠标</td>
-<td>/dev/input/mouse[0-15] （通用）<br>/dev/psaux （PS/2 接口）<br>/dev/mouse （当前鼠标）</td>
-</tr>
-<tr>
-<td>CD-ROM、DVD-ROM</td>
-<td>/dev/scd[0-1] （通用）<br>/dev/sr[0-1] （通用，CentOS 较常见）<br>/dev/cdrom    （当前 CD-ROM）</td>
-</tr>
-<tr>
-<td>磁带机</td>
-<td>/dev/ht0 （IDE 接口）<br>/dev/st0  （SATA/SCSI 接口）<br>/dev/tape （当前磁带）</td>
-</tr>
-<tr>
-<td>IDE 磁盘驱动器</td>
-<td>/dev/hd[a-d] （旧式系统才有）</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h4 id="磁盘分区"><a href="#磁盘分区" class="headerlink" title="磁盘分区"></a>磁盘分区</h4><p>磁盘主要由碟片、磁头、机械手臂与主轴马达所组成，碟片用于存储数据，磁头用于写入和读取数据。碟片上面又细分为磁道（Track）和扇区（Sector），所有碟片的同一个磁道被称为柱面（Cylinder）。扇区的物理大小分为 512 字节和 4K 字节两种，典型的碟片示意图如图 2 所示。</p>
-<p>物理硬盘无法直接被使用，只有在该硬盘上划分出分区后，才能够使用。其实仅仅划分出分区后，这块硬盘仍然是不能被使用的，需要在划分好的分区上创建文件系统，比如 FAT 或 NTFS，之后才能够被使用。</p>
-<p>常见的磁盘分区格式分为 MBR（Master Boot Record）格式和 GPT（GUID partition table）格式两种。在 MBR 格式中，扇区位置使用<strong>（柱面号 C、磁头 H、扇区号 S）</strong>来表示，最大支持 4TB 的硬盘空间。</p>
-<h4 id="启动流程"><a href="#启动流程" class="headerlink" title="启动流程"></a>启动流程</h4><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://www.zhihu.com/question/267274971">MBR分区格式最大支持容量</a></p>
-<p><a href="https://www.eassos.cn/jiao-cheng/ying-pan/mbr-vs-gpt.php">MBR 与 GPT，关于分区表你应该知道的一些知识</a></p>
+<h4 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h4><ol>
+<li><a href="https://wugenqiang.github.io/articles/hexo-do-optimization.html">Hexo+NexT+Gemini 搭建博客拥抱舒爽</a></li>
+<li><a href="http://yearito.cn/posts/hexo-theme-beautify.html">Hexo 搭建个人博客系列：主题美化篇</a></li>
+<li><a href="https://www.cnblogs.com/TechSnail/p/12933623.html">Hexo进阶设置</a></li>
+</ol>
+<h4 id="Hexo-添加本地文件下载"><a href="#Hexo-添加本地文件下载" class="headerlink" title="Hexo 添加本地文件下载"></a>Hexo 添加本地文件下载</h4><ol>
+<li><a href="https://www.dazhuanlan.com/fanhuajiantu/topics/1376769">Hexo中添加本地文件下载</a></li>
+</ol>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ol>
+<li><a href="https://novnan.github.io/Hexo/hexo-draft/">Hexo 文章保存为草稿</a></li>
+<li><a href="https://sophistt.github.io/2020/07/22/mathjax-render-error-in-hexo/">Hexo Mathjax 公式渲染</a></li>
+</ol>
 ]]></content>
       <categories>
-        <category>计算机基础</category>
+        <category>Hexo</category>
       </categories>
       <tags>
-        <tag>计算机基础</tag>
+        <tag>hexo</tag>
+        <tag>github 博客</tag>
+        <tag>gitee 博客</tag>
       </tags>
   </entry>
   <entry>
