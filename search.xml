@@ -1,69 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Markdown 常用公式</title>
-    <url>/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/</url>
-    <content><![CDATA[<h4 id="常见公式"><a href="#常见公式" class="headerlink" title="常见公式"></a>常见公式</h4><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:left">符号</th>
-<th>规则</th>
-<th style="text-align:left">符号</th>
-<th style="text-align:left">规则</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">$T^{\prime}$</td>
-<td><code>T^&#123;\prime&#125;</code></td>
-<td style="text-align:left">$\oplus$</td>
-<td style="text-align:left"><code>\oplus</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\gets$</td>
-<td><code>\gets</code></td>
-<td style="text-align:left">$\to$</td>
-<td style="text-align:left"><code>\to</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\times$</td>
-<td><code>\times</code></td>
-<td style="text-align:left">$\div$</td>
-<td style="text-align:left"><code>\div</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\sim$</td>
-<td><code>\sim</code></td>
-<td style="text-align:left">$\approx$</td>
-<td style="text-align:left"><code>\approx</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\ll$</td>
-<td><code>\ll</code></td>
-<td style="text-align:left">$\gg$</td>
-<td style="text-align:left"><code>\gg</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\lll$</td>
-<td><code>\lll</code></td>
-<td style="text-align:left">$\mathop{\lll}\limits_{32}$</td>
-<td style="text-align:left"><code>\mathop&#123;\lll&#125;\limits_&#123;32&#125;</code></td>
-</tr>
-<tr>
-<td style="text-align:left"></td>
-<td></td>
-<td style="text-align:left"></td>
-</tr>
-</tbody>
-</table>
-</div>
+    <title>Docker 部署 ThinkPHP 5.x 容器</title>
+    <url>/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/</url>
+    <content><![CDATA[<h3 id="构建-Dockerfile-文件"><a href="#构建-Dockerfile-文件" class="headerlink" title="构建 Dockerfile 文件"></a>构建 Dockerfile 文件</h3><p>在<a href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用 Docker 部署 thinkphp 项目</a>中，作者介绍了三点注意事项：</p>
+<blockquote>
+<ol>
+<li>thinkphp 的入口文件在 public 目录下，所以需要将<code>VirtualHost</code>的<code>DocumentRoot</code>指向 public 目录；</li>
+<li>thinkphp 需要设置伪静态，Apache 需要加载<code>mod_rewrite.so</code>模块；</li>
+<li>下载相应版本的 thinkphp 放到项目根目录下。</li>
+</ol>
+</blockquote>
+<p>并给出了如下的 Dockerfile 配置：</p>
+<span id="more"></span>
+<figure class="highlight docker"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">21</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/\/var\/www\/html/\/var\/www\/html\/public/g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -OL https://github.com/top-think/framework/archive/v<span class="variable">$THINKPHP_VERSION</span>.tar.gz \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar xvf v<span class="variable">$THINKPHP_VERSION</span>.tar.gz &amp;&amp; mv framework-<span class="variable">$THINKPHP_VERSION</span> thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
+<p>不过需要注意到，在仓库 <a href="https://github.com/top-think/framework.git">https://github.com/top-think/framework.git</a> 中，<strong>只提供了 thinkphp 框架，并没有提供相应的 Web 开发框架</strong>，而这可以在仓库 <a href="https://gitee.com/liu21st/thinkphp.git">https://gitee.com/liu21st/thinkphp.git</a> 中找到。</p>
+<p>据此，修改后的 Dockerfile 配置为：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sed -i <span class="string">&#x27;s/deb.debian.org\|security.debian.org/mirrors.tuna.tsing.edu.cn/g&#x27;</span> /etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="bash">	apt update &amp;&amp; apt install -y git</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">22</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s#/var/www/html#/var/www/html/tp5/public#g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/thinkphp.git ./tp5 &amp;&amp; \</span></span><br><span class="line"><span class="bash">    git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/framework.git ./tp5/thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
+<p>主要修改的地方有：</p>
+<ul>
+<li>第 3-4 行：将官方 apt 源修改为清华镜像源，并下载 git 工具</li>
+<li>第 10 行：修改<code>DocumentRoot</code>指向的<code>public</code> 目录位置</li>
+<li>第 12-13 行：拉取 ThinkPHP 5.0.22 的 <code>public</code> 等文件和 <code>thinkphp</code> 框架</li>
+</ul>
+<h3 id="创建并运行-ThinkPHP-容器"><a href="#创建并运行-ThinkPHP-容器" class="headerlink" title="创建并运行 ThinkPHP 容器"></a>创建并运行 ThinkPHP 容器</h3><p>基于 Dockerfile 文件，可以构建如下的 shell 脚本文件 <code>run-tp5.sh</code>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">THINKPHP_VERSION=5.0.22</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker image ls | grep -v local/thinkphp:v$&#123;THINKPHP_VERSION&#125;) ]]; then</span><br><span class="line">	echo &quot;create local image &#x27;local/thinkphp:v$&#123;THINKPHP_VERSION&#125;&#x27;&quot;</span><br><span class="line">	docker build -f &lt;path-to-Dockerfile&gt; -t local/thinkphp:v$&#123;THINKPHP_VERSION&#125; .</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker container ls | grep -v mytp5) ]]; then</span><br><span class="line">	echo &quot;create container &#x27;mytp5&#x27;&quot;</span><br><span class="line">	docker create -p 8080:80 --name mytp5 local/thinkphp:v$&#123;THINKPHP_VERSION&#125;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker ps | grep -v mytp5 )]]; then</span><br><span class="line">	echo &quot;run conatiner &#x27;mytp5&#x27;&quot;</span><br><span class="line">	docker start mytp5</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;container &#x27;mytp5&#x27; has started&quot;</span><br></pre></td></tr></table></figure>
+<p><code>run-tp5.sh</code> 脚本主要做了三件事：</p>
+<ol>
+<li>基于 <code>Dockerfile</code> 文件在当前目录创建本地镜像 <code>local/thinkphp:v5.0.22</code></li>
+<li>基于本地镜像 <code>local/thinkphp:v5.0.22</code> 创建容器 <code>mytp5</code>，并将容器内部端口 80 映射为外部端口 8080</li>
+<li>运行容器 <code>mytp5</code></li>
+</ol>
+<p>容器启动后，运行命令 <code>docker exec -it mytp5 /bin/bash</code> 便可以进入容器内部，修改 ThinkPHP 容器配置。</p>
+<p>在浏览器中访问地址<code>127.0.0.1:8080</code>，看到如下欢迎界面表明 ThinkPHP 服务部署成功。</p>
+<p><img src="/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/thinkphp-5.0.22.png" alt></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>如果在项目中用到了 <code>mysql</code> 等扩展，则需要使用 <code>docker-php-ext-install</code> 命令安装相应的扩展，在 Dockerfile 中添加如下代码：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 postgresql 扩展</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y libpq-dev \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-configure pgsql -with-pgsql=/usr/<span class="built_in">local</span>/pgsql \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-install pdo pdo_pgsql</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装mysql扩展</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> docker-php-ext-install pdo pdo_mysql</span></span><br></pre></td></tr></table></figure>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ol>
+<li><a href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用Docker部署thinkphp项目</a></li>
+</ol>
 ]]></content>
       <categories>
-        <category>Markdown</category>
+        <category>Docker</category>
       </categories>
       <tags>
-        <tag>公式符号</tag>
+        <tag>docker</tag>
+        <tag>thinkPHP5.x</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 创建远程登陆用户</title>
+    <url>/2021/12/13/Linux-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7/</url>
+    <content><![CDATA[<h4 id="开启远程登陆"><a href="#开启远程登陆" class="headerlink" title="开启远程登陆"></a>开启远程登陆</h4><ul>
+<li><p>修改 SSH 配置文件</p>
+<p>修改配置文件 <code>/etc/ssh/sshd_config</code> 以下字段：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置允许远程登录</span></span><br><span class="line">PasswordAuthentication yes</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增 root 远程账户</span></span><br><span class="line">AllowUsers root</span><br><span class="line">AllowUsers &lt;user&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，<em><user></user></em> 为后续添加的其他远程登录账户。 </p>
+</li>
+<li><p>重启 SSH 服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
+<p>重启完成之后即可借助远程连接工具连接到该远程服务器。</p>
+</li>
+</ul>
+<span id="more"></span>
+<h4 id="创建远程账户"><a href="#创建远程账户" class="headerlink" title="创建远程账户"></a>创建远程账户</h4><ul>
+<li><p>创建本地用户</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">useradd -d /home/&lt;newuser&gt; -m &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，</p>
+<ul>
+<li><p><code>-d</code> 表示该用户的家目录</p>
+</li>
+<li><p><code>-m</code> 表示创建该用户的家目录</p>
+</li>
+</ul>
+</li>
+<li><p>修改用户密码</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">passwd &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
+<p>根据提示输入两次用户密码。</p>
+</li>
+<li><p>修改 SSH 配置文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增远程登录用户</span></span><br><span class="line">AllowUsers &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启 SSH 服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
+<p>操作完成后即可使用新账号登录远程服务器。</p>
+</li>
+</ul>
+<h4 id="删除远程登录账户"><a href="#删除远程登录账户" class="headerlink" title="删除远程登录账户"></a>删除远程登录账户</h4><ul>
+<li><p>修改 SSH 配置文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁用远程用户</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> AllowUsers &lt;user&gt;</span></span><br></pre></td></tr></table></figure>
+<p>修改配置文件后记得重启 SSH 服务。</p>
+</li>
+<li><p>删除本地用户</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">userdel -r &lt;user&gt;</span><br></pre></td></tr></table></figure>
+<p><code>userdel</code> 命令默认会删除 <em>/etc/passwd</em>、<em>/etc/shadow</em>、<em>/etc/group</em>、<em>/etc/gshadow</em> 四个文件里该账户和组的信息，使用 <code>-r</code> 选项递归删除该用户家目录下的用户数据。</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>创建用户</tag>
+        <tag>远程登录</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 命令行配置 WiFi</title>
+    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
+    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
+<span id="more"></span>
+<ol>
+<li><p><span id="s1">查看网络设备列表</span></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
+<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
+</li>
+<li><p>开启 WiFi</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扫描附近的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接到指定的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname &lt;if-dev&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码，并将 <code>&lt;if-dev&gt;</code> 替换为在<a href="#s1">第一步</a>中显示的网络设备。</p>
+</li>
+</ol>
+<p>完成上面四步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>命令行</tag>
+        <tag>WiFi 配置</tag>
       </tags>
   </entry>
   <entry>
@@ -157,82 +228,69 @@ S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我�
       </tags>
   </entry>
   <entry>
-    <title>Docker 部署 ThinkPHP 5.x 容器</title>
-    <url>/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/</url>
-    <content><![CDATA[<h3 id="构建-Dockerfile-文件"><a href="#构建-Dockerfile-文件" class="headerlink" title="构建 Dockerfile 文件"></a>构建 Dockerfile 文件</h3><p>在<a href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用 Docker 部署 thinkphp 项目</a>中，作者介绍了三点注意事项：</p>
-<blockquote>
-<ol>
-<li>thinkphp 的入口文件在 public 目录下，所以需要将<code>VirtualHost</code>的<code>DocumentRoot</code>指向 public 目录；</li>
-<li>thinkphp 需要设置伪静态，Apache 需要加载<code>mod_rewrite.so</code>模块；</li>
-<li>下载相应版本的 thinkphp 放到项目根目录下。</li>
-</ol>
-</blockquote>
-<p>并给出了如下的 Dockerfile 配置：</p>
-<span id="more"></span>
-<figure class="highlight docker"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">21</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/\/var\/www\/html/\/var\/www\/html\/public/g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -OL https://github.com/top-think/framework/archive/v<span class="variable">$THINKPHP_VERSION</span>.tar.gz \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar xvf v<span class="variable">$THINKPHP_VERSION</span>.tar.gz &amp;&amp; mv framework-<span class="variable">$THINKPHP_VERSION</span> thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
-<p>不过需要注意到，在仓库 <a href="https://github.com/top-think/framework.git">https://github.com/top-think/framework.git</a> 中，<strong>只提供了 thinkphp 框架，并没有提供相应的 Web 开发框架</strong>，而这可以在仓库 <a href="https://gitee.com/liu21st/thinkphp.git">https://gitee.com/liu21st/thinkphp.git</a> 中找到。</p>
-<p>据此，修改后的 Dockerfile 配置为：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">5.6</span>-apache</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sed -i <span class="string">&#x27;s/deb.debian.org\|security.debian.org/mirrors.tuna.tsing.edu.cn/g&#x27;</span> /etc/apt/sources.list &amp;&amp; \</span></span><br><span class="line"><span class="bash">	apt update &amp;&amp; apt install -y git</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">ENV</span> THINKPHP_VERSION=<span class="number">5.0</span>.<span class="number">22</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s/AllowOverride None/AllowOverride All/g&#x27;</span> /etc/apache2/apache2.conf \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i <span class="string">&#x27;s#/var/www/html#/var/www/html/tp5/public#g&#x27;</span> /etc/apache2/sites-enabled/000-default.conf</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/thinkphp.git ./tp5 &amp;&amp; \</span></span><br><span class="line"><span class="bash">    git <span class="built_in">clone</span> --depth 1 -b v<span class="variable">$THINKPHP_VERSION</span> https://gitee.com/liu21st/framework.git ./tp5/thinkphp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> . /var/www/html/</span></span><br></pre></td></tr></table></figure>
-<p>主要修改的地方有：</p>
-<ul>
-<li>第 3-4 行：将官方 apt 源修改为清华镜像源，并下载 git 工具</li>
-<li>第 10 行：修改<code>DocumentRoot</code>指向的<code>public</code> 目录位置</li>
-<li>第 12-13 行：拉取 ThinkPHP 5.0.22 的 <code>public</code> 等文件和 <code>thinkphp</code> 框架</li>
-</ul>
-<h3 id="创建并运行-ThinkPHP-容器"><a href="#创建并运行-ThinkPHP-容器" class="headerlink" title="创建并运行 ThinkPHP 容器"></a>创建并运行 ThinkPHP 容器</h3><p>基于 Dockerfile 文件，可以构建如下的 shell 脚本文件 <code>run-tp5.sh</code>：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">THINKPHP_VERSION=5.0.22</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker image ls | grep -v local/thinkphp:v$&#123;THINKPHP_VERSION&#125;) ]]; then</span><br><span class="line">	echo &quot;create local image &#x27;local/thinkphp:v$&#123;THINKPHP_VERSION&#125;&#x27;&quot;</span><br><span class="line">	docker build -f &lt;path-to-Dockerfile&gt; -t local/thinkphp:v$&#123;THINKPHP_VERSION&#125; .</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker container ls | grep -v mytp5) ]]; then</span><br><span class="line">	echo &quot;create container &#x27;mytp5&#x27;&quot;</span><br><span class="line">	docker create -p 8080:80 --name mytp5 local/thinkphp:v$&#123;THINKPHP_VERSION&#125;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ -n $(docker ps | grep -v mytp5 )]]; then</span><br><span class="line">	echo &quot;run conatiner &#x27;mytp5&#x27;&quot;</span><br><span class="line">	docker start mytp5</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;container &#x27;mytp5&#x27; has started&quot;</span><br></pre></td></tr></table></figure>
-<p><code>run-tp5.sh</code> 脚本主要做了三件事：</p>
-<ol>
-<li>基于 <code>Dockerfile</code> 文件在当前目录创建本地镜像 <code>local/thinkphp:v5.0.22</code></li>
-<li>基于本地镜像 <code>local/thinkphp:v5.0.22</code> 创建容器 <code>mytp5</code>，并将容器内部端口 80 映射为外部端口 8080</li>
-<li>运行容器 <code>mytp5</code></li>
-</ol>
-<p>容器启动后，运行命令 <code>docker exec -it mytp5 /bin/bash</code> 便可以进入容器内部，修改 ThinkPHP 容器配置。</p>
-<p>在浏览器中访问地址<code>127.0.0.1:8080</code>，看到如下欢迎界面表明 ThinkPHP 服务部署成功。</p>
-<p><img src="/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/thinkphp-5.0.22.png" alt></p>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>如果在项目中用到了 <code>mysql</code> 等扩展，则需要使用 <code>docker-php-ext-install</code> 命令安装相应的扩展，在 Dockerfile 中添加如下代码：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 postgresql 扩展</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y libpq-dev \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-configure pgsql -with-pgsql=/usr/<span class="built_in">local</span>/pgsql \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-install pdo pdo_pgsql</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装mysql扩展</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> docker-php-ext-install pdo pdo_mysql</span></span><br></pre></td></tr></table></figure>
-<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ol>
-<li><a href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用Docker部署thinkphp项目</a></li>
-</ol>
+    <title>Markdown 常用公式</title>
+    <url>/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/</url>
+    <content><![CDATA[<h4 id="常见公式"><a href="#常见公式" class="headerlink" title="常见公式"></a>常见公式</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">符号</th>
+<th>规则</th>
+<th style="text-align:left">符号</th>
+<th style="text-align:left">规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">$T^{\prime}$</td>
+<td><code>T^&#123;\prime&#125;</code></td>
+<td style="text-align:left">$\oplus$</td>
+<td style="text-align:left"><code>\oplus</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\gets$</td>
+<td><code>\gets</code></td>
+<td style="text-align:left">$\to$</td>
+<td style="text-align:left"><code>\to</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\times$</td>
+<td><code>\times</code></td>
+<td style="text-align:left">$\div$</td>
+<td style="text-align:left"><code>\div</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\sim$</td>
+<td><code>\sim</code></td>
+<td style="text-align:left">$\approx$</td>
+<td style="text-align:left"><code>\approx</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\ll$</td>
+<td><code>\ll</code></td>
+<td style="text-align:left">$\gg$</td>
+<td style="text-align:left"><code>\gg</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\lll$</td>
+<td><code>\lll</code></td>
+<td style="text-align:left">$\mathop{\lll}\limits_{32}$</td>
+<td style="text-align:left"><code>\mathop&#123;\lll&#125;\limits_&#123;32&#125;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+</div>
 ]]></content>
       <categories>
-        <category>Docker</category>
+        <category>Markdown</category>
       </categories>
       <tags>
-        <tag>docker</tag>
-        <tag>thinkPHP5.x</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 命令行配置 WiFi</title>
-    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
-    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
-<span id="more"></span>
-<ol>
-<li><p><span id="s1">查看网络设备列表</span></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
-<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
-</li>
-<li><p>开启 WiFi</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>扫描附近的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连接到指定的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname &lt;if-dev&gt;</span><br></pre></td></tr></table></figure>
-<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码，并将 <code>&lt;if-dev&gt;</code> 替换为在<a href="#s1">第一步</a>中显示的网络设备。</p>
-</li>
-</ol>
-<p>完成上面四步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>命令行</tag>
-        <tag>WiFi 配置</tag>
+        <tag>公式符号</tag>
       </tags>
   </entry>
   <entry>
@@ -368,81 +426,6 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
         <tag>hexo</tag>
         <tag>github 博客</tag>
         <tag>gitee 博客</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 创建远程登陆用户</title>
-    <url>/2021/12/13/Linux-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7/</url>
-    <content><![CDATA[<h4 id="开启远程登陆"><a href="#开启远程登陆" class="headerlink" title="开启远程登陆"></a>开启远程登陆</h4><ul>
-<li><p>修改 SSH 配置文件</p>
-<p>修改配置文件 <code>/etc/ssh/sshd_config</code> 以下字段：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置允许远程登录</span></span><br><span class="line">PasswordAuthentication yes</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增 root 远程账户</span></span><br><span class="line">AllowUsers root</span><br><span class="line">AllowUsers &lt;user&gt;</span><br></pre></td></tr></table></figure>
-<p>其中，<em><user></user></em> 为后续添加的其他远程登录账户。 </p>
-</li>
-<li><p>重启 SSH 服务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-<p>重启完成之后即可借助远程连接工具连接到该远程服务器。</p>
-</li>
-</ul>
-<span id="more"></span>
-<h4 id="创建远程账户"><a href="#创建远程账户" class="headerlink" title="创建远程账户"></a>创建远程账户</h4><ul>
-<li><p>创建本地用户</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">useradd -d /home/&lt;newuser&gt; -m &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
-<p>其中，</p>
-<ul>
-<li><p><code>-d</code> 表示该用户的家目录</p>
-</li>
-<li><p><code>-m</code> 表示创建该用户的家目录</p>
-</li>
-</ul>
-</li>
-<li><p>修改用户密码</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">passwd &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
-<p>根据提示输入两次用户密码。</p>
-</li>
-<li><p>修改 SSH 配置文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增远程登录用户</span></span><br><span class="line">AllowUsers &lt;newuser&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>重启 SSH 服务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-<p>操作完成后即可使用新账号登录远程服务器。</p>
-</li>
-</ul>
-<h4 id="删除远程登录账户"><a href="#删除远程登录账户" class="headerlink" title="删除远程登录账户"></a>删除远程登录账户</h4><ul>
-<li><p>修改 SSH 配置文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁用远程用户</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> AllowUsers &lt;user&gt;</span></span><br></pre></td></tr></table></figure>
-<p>修改配置文件后记得重启 SSH 服务。</p>
-</li>
-<li><p>删除本地用户</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">userdel -r &lt;user&gt;</span><br></pre></td></tr></table></figure>
-<p><code>userdel</code> 命令默认会删除 <em>/etc/passwd</em>、<em>/etc/shadow</em>、<em>/etc/group</em>、<em>/etc/gshadow</em> 四个文件里该账户和组的信息，使用 <code>-r</code> 选项递归删除该用户家目录下的用户数据。</p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>创建用户</tag>
-        <tag>远程登录</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux Shell 调用 Python 脚本</title>
-    <url>/2021/12/10/Linux-Shell-%E8%B0%83%E7%94%A8-Python-%E8%84%9A%E6%9C%AC/</url>
-    <content><![CDATA[<h4 id="在-Shell-中运行-Python-脚本"><a href="#在-Shell-中运行-Python-脚本" class="headerlink" title="在 Shell 中运行 Python 脚本"></a>在 Shell 中运行 Python 脚本</h4><h4 id="在-Shell-中调用-Python-脚本"><a href="#在-Shell-中调用-Python-脚本" class="headerlink" title="在 Shell 中调用 Python 脚本"></a>在 Shell 中调用 Python 脚本</h4><h4 id="在-Shell-中调用-Python-函数"><a href="#在-Shell-中调用-Python-函数" class="headerlink" title="在 Shell 中调用 Python 函数"></a>在 Shell 中调用 Python 函数</h4><h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><ol>
-<li><a href="https://blog.csdn.net/Gou_Hailong/article/details/111091452">Python 如何用 shell 调用脚本中的函数+参数传递</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Shell</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Shell</tag>
-        <tag>Python</tag>
-        <tag>脚本传参</tag>
       </tags>
   </entry>
   <entry>
