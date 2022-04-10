@@ -49,37 +49,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux 命令行配置 WiFi</title>
-    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
-    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
-<span id="more"></span>
-<ol>
-<li><p><span id="s1">查看网络设备列表</span></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
-<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
-</li>
-<li><p>开启 WiFi</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>扫描附近的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连接到指定的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname &lt;if-dev&gt;</span><br></pre></td></tr></table></figure>
-<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码，并将 <code>&lt;if-dev&gt;</code> 替换为在<a href="#s1">第一步</a>中显示的网络设备。</p>
-</li>
-</ol>
-<p>完成上面四步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>命令行</tag>
-        <tag>WiFi 配置</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Markdown 常用公式</title>
     <url>/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/</url>
     <content><![CDATA[<h4 id="常见公式"><a href="#常见公式" class="headerlink" title="常见公式"></a>常见公式</h4><div class="table-container">
@@ -143,6 +112,37 @@
       </categories>
       <tags>
         <tag>公式符号</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 命令行配置 WiFi</title>
+    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
+    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
+<span id="more"></span>
+<ol>
+<li><p><span id="s1">查看网络设备列表</span></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
+<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
+</li>
+<li><p>开启 WiFi</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扫描附近的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接到指定的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname &lt;if-dev&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码，并将 <code>&lt;if-dev&gt;</code> 替换为在<a href="#s1">第一步</a>中显示的网络设备。</p>
+</li>
+</ol>
+<p>完成上面四步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>命令行</tag>
+        <tag>WiFi 配置</tag>
       </tags>
   </entry>
   <entry>
@@ -294,6 +294,141 @@ S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我�
       </tags>
   </entry>
   <entry>
+    <title>Hexo 介绍</title>
+    <url>/2021/07/29/hexo-%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h4 id="使用-Github-空间搭建-Hexo-技术博客"><a href="#使用-Github-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Github 空间搭建 Hexo 技术博客"></a>使用 Github 空间搭建 Hexo 技术博客</h4><ol>
+<li><a href="https://blog.csdn.net/wugenqiang/article/details/88373385">使用 Github 空间搭建 Hexo 技术博客</a></li>
+<li><a href="https://blog.csdn.net/qq_41907993/article/details/104387191?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-1.readhide&amp;spm=1001.2101.3001.4242">个人博客搭建——基于HEXO框架</a></li>
+</ol>
+<h4 id="使用-Gitee-空间搭建-Hexo-技术博客"><a href="#使用-Gitee-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Gitee 空间搭建 Hexo 技术博客"></a>使用 Gitee 空间搭建 Hexo 技术博客</h4><ol>
+<li><a href="https://telcruel.gitee.io/2020/02/13/Hexo/">Hexo + Gitee 博客搭建</a></li>
+</ol>
+<span id="more"></span>
+<h4 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h4><ol>
+<li><a href="https://wugenqiang.github.io/articles/hexo-do-optimization.html">Hexo+NexT+Gemini 搭建博客拥抱舒爽</a></li>
+<li><a href="http://yearito.cn/posts/hexo-theme-beautify.html">Hexo 搭建个人博客系列：主题美化篇</a></li>
+<li><a href="https://www.cnblogs.com/TechSnail/p/12933623.html">Hexo进阶设置</a></li>
+</ol>
+<h4 id="Hexo-添加本地文件下载"><a href="#Hexo-添加本地文件下载" class="headerlink" title="Hexo 添加本地文件下载"></a>Hexo 添加本地文件下载</h4><ol>
+<li><a href="https://www.dazhuanlan.com/fanhuajiantu/topics/1376769">Hexo中添加本地文件下载</a></li>
+</ol>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ol>
+<li><a href="https://novnan.github.io/Hexo/hexo-draft/">Hexo 文章保存为草稿</a></li>
+<li><a href="https://sophistt.github.io/2020/07/22/mathjax-render-error-in-hexo/">Hexo Mathjax 公式渲染</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>github 博客</tag>
+        <tag>gitee 博客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SM4 分组密码算法简介</title>
+    <url>/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<p>SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。</p>
+<span id="more"></span>
+<p align="center">表 1 SM4 与 AES 算法比较</p>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">算法</th>
+<th style="text-align:center">加密轮数</th>
+<th style="text-align:center">密钥长度（比特）</th>
+<th style="text-align:center">分组长度（比特）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">SM4</td>
+<td style="text-align:center">32</td>
+<td style="text-align:center">128</td>
+<td style="text-align:center">128</td>
+</tr>
+<tr>
+<td style="text-align:center">AES-128</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">128</td>
+<td style="text-align:center">128</td>
+</tr>
+<tr>
+<td style="text-align:center">AES-192</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">192</td>
+<td style="text-align:center">128</td>
+</tr>
+<tr>
+<td style="text-align:center">AES-256</td>
+<td style="text-align:center">14</td>
+<td style="text-align:center">256</td>
+<td style="text-align:center">128</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="SM4-加密算法"><a href="#SM4-加密算法" class="headerlink" title="SM4 加密算法"></a>SM4 加密算法</h4><p>为了方便说明，本文定义 $Z_2^m$ 表示 $m$ 比特向量，符号 $\oplus$ 表示异或运算。设明文输入为 $X = \left(X_0,X_1,X_2,X_3\right) \in \left(Z_2^{32}\right)^4$ ，密文输出为 $Y = \left(Y_0,Y_1,Y_2,Y_3\right) \in \left(Z_2^{32}\right)^4$ ，轮密钥为 $rk_i \in Z_2^{32}, i=0,1,\dots,31$ ，则 SM4 加密算法表示为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+X_{i+4} &= F\left(X_i,X_{i+1},X_{i+2},X_{i+3},rk_i\right) \\
+       &= X_i \oplus T\left(X_{i+1} \oplus X_{i+2} \oplus X_{i+3} \oplus rk_i \right) \quad i=0,1,\dots,31\\ \\
+Y &= \left(Y_0,Y_1,Y_2,Y_3\right) = \left(X_{35},X_{34},X_{33},X_{32}\right)
+\end{aligned}</script><p>其中，$T$ 是一个 $Z_2^{32} \to Z_2^{32}$ 的合成变换，包含线性变换 $L$ 和 非线性变换 $\tau$ ，即：$T(x) = L(\tau(x))$ 。</p>
+<ol>
+<li><p>非线性变换 $\tau$ 由 4 个并行的 8 进 8 出的 S 盒查表组成，设输入为 $x=(x_0,x_1,x_2,x_3) \in (Z_2^8)^4$ ，输出为 $y=(y_0,y_1,y_2,y_3) \in (Z_2^8)^4$ ，则：</p>
+<script type="math/tex; mode=display">
+(y_0,y_1,y_2,y_3) = \tau(x)=(S(x_0),S(x_1),S(x_2),S(x_3))</script><p>对于 S 盒的 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表中对应行列所对应的    值。S 盒如图 1 所示：</p>
+<p><img src="/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/S 盒.png" alt="image-20210905154433201"></p>
+<p align="center">图 1 S 盒</p>
+</li>
+<li><p>线性变换 $L$ 接收非线性变换 $\tau$ 的输出作为输入，设线性变换 $L$ 的输出为 $z \in Z_2^{32}$ ，则：</p>
+<script type="math/tex; mode=display">
+z=L(y) = y \oplus (y \lll 2) \oplus (y \lll 10) \oplus (y \lll 18) \oplus (y \lll 24)</script><p>其中，$\lll$ 表示循环左移，如 $y \lll 2$ 表示将 $y$ 循环左移 2 位。</p>
+</li>
+</ol>
+<h4 id="SM4-密钥扩展算法"><a href="#SM4-密钥扩展算法" class="headerlink" title="SM4 密钥扩展算法"></a>SM4 密钥扩展算法</h4><p>SM4 算法使用密钥扩展算法对初始密钥进行扩展生成各轮子密钥。令初始密钥表示为 $MK=(MK_0,MK_1,MK_2,MK_3) \in (Z_2^{32})^4$ ，则按如下方式生成 32 轮子密钥：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(K_0,K_1,K_2,K_3) &= (MK_0 \oplus FK_0,MK_1 \oplus FK_1,MK_2 \oplus FK_2,MK_3 \oplus FK_3) \\
+rk_i = K_{i+4} &= K_i \oplus T^{\prime}(K_{i+1} \oplus K_{i+2} \oplus K_{i+3} \oplus CK_i) \quad i=0,1,\dots,31
+\end{aligned}</script><p>其中：</p>
+<ol>
+<li><p>$T^{\prime} = L^{\prime}(\tau(\cdot))$ ，$L^{\prime}$ 表示为：</p>
+<script type="math/tex; mode=display">
+L^{\prime}(B) = B \oplus (B \lll 13) \oplus (B \lll 23)</script></li>
+<li><p>$FK$ 是系统参数，取值为：</p>
+<script type="math/tex; mode=display">FK_0 = (A3B1BAC6), FK_1 = (56AA3350)</script><script type="math/tex; mode=display">FK_2 = (677D9197),FK_3 = (B27022DC)</script></li>
+<li><p>$CK$ 是固定参数，其构造方法为：</p>
+<p>设 $CK_{i}$ 的第 $j$ 个字节为 $ck_{i,j} i=0,1,\dots,31; j=0,1,2,3$ ，即 $CK_i = (ck_{i,0}, ck_{i,1}, ck_{i,2}, ck_{i,3}) \in (Z_2^8)^4$ ，那么有：</p>
+<script type="math/tex; mode=display">
+ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算出所有的 $CK$ 值，即：</p>
+<blockquote>
+<p>00070E15, 1C232A31, 383F464D, 545B6269,</p>
+<p>70777E85, 8C939AA1, A8AFB6BD, C4CBD2D9,</p>
+<p>E0E7EEF5, FC030A11, 181F262D, 343B4249,</p>
+<p>50575E65, 6C737A81, 888F969D, A4ABB2B9,</p>
+<p>C0C7CED5, DCE3EAF1, F8FF060D, 141B2229,</p>
+<p>30373E45, 4C535A61, 686F767D, 848B9299,</p>
+<p>A0A7AEB5, BCC3CAD1, D8DFE6ED, F4FB0209,</p>
+<p>10171E25, 2C333A41, 484F565D, 646B7279</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p>[1] <a href="/download/SM4分组密码算法.pdf">SM4 分组密码算法</a></p>
+]]></content>
+      <categories>
+        <category>国密算法</category>
+      </categories>
+      <tags>
+        <tag>SM4 算法</tag>
+        <tag>分组密码算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>计算机基础</title>
     <url>/2022/02/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h3 id="计算机硬件组成"><a href="#计算机硬件组成" class="headerlink" title="计算机硬件组成"></a>计算机硬件组成</h3><p>现代计算机以冯·诺伊曼结构为基础，由中央处理器（CPU）、内存、外存、输入和输出设备组成，如图 1 所示。</p>
@@ -405,141 +540,6 @@ S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我�
       </categories>
       <tags>
         <tag>计算机基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SM4 分组密码算法简介</title>
-    <url>/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<p>SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。</p>
-<span id="more"></span>
-<p align="center">表 1 SM4 与 AES 算法比较</p>
-
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">算法</th>
-<th style="text-align:center">加密轮数</th>
-<th style="text-align:center">密钥长度（比特）</th>
-<th style="text-align:center">分组长度（比特）</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">SM4</td>
-<td style="text-align:center">32</td>
-<td style="text-align:center">128</td>
-<td style="text-align:center">128</td>
-</tr>
-<tr>
-<td style="text-align:center">AES-128</td>
-<td style="text-align:center">10</td>
-<td style="text-align:center">128</td>
-<td style="text-align:center">128</td>
-</tr>
-<tr>
-<td style="text-align:center">AES-192</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">192</td>
-<td style="text-align:center">128</td>
-</tr>
-<tr>
-<td style="text-align:center">AES-256</td>
-<td style="text-align:center">14</td>
-<td style="text-align:center">256</td>
-<td style="text-align:center">128</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h4 id="SM4-加密算法"><a href="#SM4-加密算法" class="headerlink" title="SM4 加密算法"></a>SM4 加密算法</h4><p>为了方便说明，本文定义 $Z_2^m$ 表示 $m$ 比特向量，符号 $\oplus$ 表示异或运算。设明文输入为 $X = \left(X_0,X_1,X_2,X_3\right) \in \left(Z_2^{32}\right)^4$ ，密文输出为 $Y = \left(Y_0,Y_1,Y_2,Y_3\right) \in \left(Z_2^{32}\right)^4$ ，轮密钥为 $rk_i \in Z_2^{32}, i=0,1,\dots,31$ ，则 SM4 加密算法表示为：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-X_{i+4} &= F\left(X_i,X_{i+1},X_{i+2},X_{i+3},rk_i\right) \\
-       &= X_i \oplus T\left(X_{i+1} \oplus X_{i+2} \oplus X_{i+3} \oplus rk_i \right) \quad i=0,1,\dots,31\\ \\
-Y &= \left(Y_0,Y_1,Y_2,Y_3\right) = \left(X_{35},X_{34},X_{33},X_{32}\right)
-\end{aligned}</script><p>其中，$T$ 是一个 $Z_2^{32} \to Z_2^{32}$ 的合成变换，包含线性变换 $L$ 和 非线性变换 $\tau$ ，即：$T(x) = L(\tau(x))$ 。</p>
-<ol>
-<li><p>非线性变换 $\tau$ 由 4 个并行的 8 进 8 出的 S 盒查表组成，设输入为 $x=(x_0,x_1,x_2,x_3) \in (Z_2^8)^4$ ，输出为 $y=(y_0,y_1,y_2,y_3) \in (Z_2^8)^4$ ，则：</p>
-<script type="math/tex; mode=display">
-(y_0,y_1,y_2,y_3) = \tau(x)=(S(x_0),S(x_1),S(x_2),S(x_3))</script><p>对于 S 盒的 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表中对应行列所对应的    值。S 盒如图 1 所示：</p>
-<p><img src="/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/S 盒.png" alt="image-20210905154433201"></p>
-<p align="center">图 1 S 盒</p>
-</li>
-<li><p>线性变换 $L$ 接收非线性变换 $\tau$ 的输出作为输入，设线性变换 $L$ 的输出为 $z \in Z_2^{32}$ ，则：</p>
-<script type="math/tex; mode=display">
-z=L(y) = y \oplus (y \lll 2) \oplus (y \lll 10) \oplus (y \lll 18) \oplus (y \lll 24)</script><p>其中，$\lll$ 表示循环左移，如 $y \lll 2$ 表示将 $y$ 循环左移 2 位。</p>
-</li>
-</ol>
-<h4 id="SM4-密钥扩展算法"><a href="#SM4-密钥扩展算法" class="headerlink" title="SM4 密钥扩展算法"></a>SM4 密钥扩展算法</h4><p>SM4 算法使用密钥扩展算法对初始密钥进行扩展生成各轮子密钥。令初始密钥表示为 $MK=(MK_0,MK_1,MK_2,MK_3) \in (Z_2^{32})^4$ ，则按如下方式生成 32 轮子密钥：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-(K_0,K_1,K_2,K_3) &= (MK_0 \oplus FK_0,MK_1 \oplus FK_1,MK_2 \oplus FK_2,MK_3 \oplus FK_3) \\
-rk_i = K_{i+4} &= K_i \oplus T^{\prime}(K_{i+1} \oplus K_{i+2} \oplus K_{i+3} \oplus CK_i) \quad i=0,1,\dots,31
-\end{aligned}</script><p>其中：</p>
-<ol>
-<li><p>$T^{\prime} = L^{\prime}(\tau(\cdot))$ ，$L^{\prime}$ 表示为：</p>
-<script type="math/tex; mode=display">
-L^{\prime}(B) = B \oplus (B \lll 13) \oplus (B \lll 23)</script></li>
-<li><p>$FK$ 是系统参数，取值为：</p>
-<script type="math/tex; mode=display">FK_0 = (A3B1BAC6), FK_1 = (56AA3350)</script><script type="math/tex; mode=display">FK_2 = (677D9197),FK_3 = (B27022DC)</script></li>
-<li><p>$CK$ 是固定参数，其构造方法为：</p>
-<p>设 $CK_{i}$ 的第 $j$ 个字节为 $ck_{i,j} i=0,1,\dots,31; j=0,1,2,3$ ，即 $CK_i = (ck_{i,0}, ck_{i,1}, ck_{i,2}, ck_{i,3}) \in (Z_2^8)^4$ ，那么有：</p>
-<script type="math/tex; mode=display">
-ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算出所有的 $CK$ 值，即：</p>
-<blockquote>
-<p>00070E15, 1C232A31, 383F464D, 545B6269,</p>
-<p>70777E85, 8C939AA1, A8AFB6BD, C4CBD2D9,</p>
-<p>E0E7EEF5, FC030A11, 181F262D, 343B4249,</p>
-<p>50575E65, 6C737A81, 888F969D, A4ABB2B9,</p>
-<p>C0C7CED5, DCE3EAF1, F8FF060D, 141B2229,</p>
-<p>30373E45, 4C535A61, 686F767D, 848B9299,</p>
-<p>A0A7AEB5, BCC3CAD1, D8DFE6ED, F4FB0209,</p>
-<p>10171E25, 2C333A41, 484F565D, 646B7279</p>
-</blockquote>
-</li>
-</ol>
-<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p>[1] <a href="/download/SM4分组密码算法.pdf">SM4 分组密码算法</a></p>
-]]></content>
-      <categories>
-        <category>国密算法</category>
-      </categories>
-      <tags>
-        <tag>SM4 算法</tag>
-        <tag>分组密码算法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo 介绍</title>
-    <url>/2021/07/29/hexo-%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h4 id="使用-Github-空间搭建-Hexo-技术博客"><a href="#使用-Github-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Github 空间搭建 Hexo 技术博客"></a>使用 Github 空间搭建 Hexo 技术博客</h4><ol>
-<li><a href="https://blog.csdn.net/wugenqiang/article/details/88373385">使用 Github 空间搭建 Hexo 技术博客</a></li>
-<li><a href="https://blog.csdn.net/qq_41907993/article/details/104387191?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-1.readhide&amp;spm=1001.2101.3001.4242">个人博客搭建——基于HEXO框架</a></li>
-</ol>
-<h4 id="使用-Gitee-空间搭建-Hexo-技术博客"><a href="#使用-Gitee-空间搭建-Hexo-技术博客" class="headerlink" title="使用 Gitee 空间搭建 Hexo 技术博客"></a>使用 Gitee 空间搭建 Hexo 技术博客</h4><ol>
-<li><a href="https://telcruel.gitee.io/2020/02/13/Hexo/">Hexo + Gitee 博客搭建</a></li>
-</ol>
-<span id="more"></span>
-<h4 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h4><ol>
-<li><a href="https://wugenqiang.github.io/articles/hexo-do-optimization.html">Hexo+NexT+Gemini 搭建博客拥抱舒爽</a></li>
-<li><a href="http://yearito.cn/posts/hexo-theme-beautify.html">Hexo 搭建个人博客系列：主题美化篇</a></li>
-<li><a href="https://www.cnblogs.com/TechSnail/p/12933623.html">Hexo进阶设置</a></li>
-</ol>
-<h4 id="Hexo-添加本地文件下载"><a href="#Hexo-添加本地文件下载" class="headerlink" title="Hexo 添加本地文件下载"></a>Hexo 添加本地文件下载</h4><ol>
-<li><a href="https://www.dazhuanlan.com/fanhuajiantu/topics/1376769">Hexo中添加本地文件下载</a></li>
-</ol>
-<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ol>
-<li><a href="https://novnan.github.io/Hexo/hexo-draft/">Hexo 文章保存为草稿</a></li>
-<li><a href="https://sophistt.github.io/2020/07/22/mathjax-render-error-in-hexo/">Hexo Mathjax 公式渲染</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-        <tag>github 博客</tag>
-        <tag>gitee 博客</tag>
       </tags>
   </entry>
   <entry>
