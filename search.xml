@@ -49,6 +49,103 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux 命令行配置 WiFi</title>
+    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
+    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
+<span id="more"></span>
+<ol>
+<li><p><span id="s1">查看网络设备列表</span></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
+<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
+</li>
+<li><p>开启 WiFi</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扫描附近的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接到指定的 WiFi 热点</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname &lt;if-dev&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码，并将 <code>&lt;if-dev&gt;</code> 替换为在<a href="#s1">第一步</a>中显示的网络设备。</p>
+</li>
+</ol>
+<p>完成上面四步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>命令行</tag>
+        <tag>WiFi 配置</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Markdown 常用公式</title>
+    <url>/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/</url>
+    <content><![CDATA[<h4 id="常见公式"><a href="#常见公式" class="headerlink" title="常见公式"></a>常见公式</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">符号</th>
+<th>规则</th>
+<th style="text-align:left">符号</th>
+<th style="text-align:left">规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">$T^{\prime}$</td>
+<td><code>T^&#123;\prime&#125;</code></td>
+<td style="text-align:left">$\oplus$</td>
+<td style="text-align:left"><code>\oplus</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\gets$</td>
+<td><code>\gets</code></td>
+<td style="text-align:left">$\to$</td>
+<td style="text-align:left"><code>\to</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\times$</td>
+<td><code>\times</code></td>
+<td style="text-align:left">$\div$</td>
+<td style="text-align:left"><code>\div</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\sim$</td>
+<td><code>\sim</code></td>
+<td style="text-align:left">$\approx$</td>
+<td style="text-align:left"><code>\approx</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\ll$</td>
+<td><code>\ll</code></td>
+<td style="text-align:left">$\gg$</td>
+<td style="text-align:left"><code>\gg</code></td>
+</tr>
+<tr>
+<td style="text-align:left">$\lll$</td>
+<td><code>\lll</code></td>
+<td style="text-align:left">$\mathop{\lll}\limits_{32}$</td>
+<td style="text-align:left"><code>\mathop&#123;\lll&#125;\limits_&#123;32&#125;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+</div>
+]]></content>
+      <categories>
+        <category>Markdown</category>
+      </categories>
+      <tags>
+        <tag>公式符号</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux 创建远程登陆用户</title>
     <url>/2021/12/13/Linux-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7/</url>
     <content><![CDATA[<h4 id="开启远程登陆"><a href="#开启远程登陆" class="headerlink" title="开启远程登陆"></a>开启远程登陆</h4><ul>
@@ -104,37 +201,6 @@
         <tag>Linux</tag>
         <tag>创建用户</tag>
         <tag>远程登录</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 命令行配置 WiFi</title>
-    <url>/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/</url>
-    <content><![CDATA[<p>在 Linux 中，可以使用 <strong>NetworkManager</strong> 工具来管理网络，其在命令行下对应的命令是 <code>nmcli</code>。因此如果在图形界面中无法连接指定 WiFi，此时可在命令行中手动连接。</p>
-<span id="more"></span>
-<ol>
-<li><p><span id="s1">查看网络设备列表</span></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev</span><br></pre></td></tr></table></figure>
-<p>注意：如果列出的设备状态是 <strong>unmanaged</strong>，说明网络设备不受 <strong>NetworkManager</strong> 管理，此时可尝试清空 <em>/etc/network/interfaces</em> 下的网络设置，然后重启，重新查看网络设备。</p>
-</li>
-<li><p>开启 WiFi</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli r wifi on</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>扫描附近的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连接到指定的 WiFi 热点</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo nmcli dev wifi connect <span class="string">&quot;SSID&quot;</span> password <span class="string">&quot;PASSWORD&quot;</span> ifname &lt;if-dev&gt;</span><br></pre></td></tr></table></figure>
-<p>注意：请将 <code>SSID</code> 和 <code>PASSWORD</code> 替换成实际的 WiFi 名称和密码，并将 <code>&lt;if-dev&gt;</code> 替换为在<a href="#s1">第一步</a>中显示的网络设备。</p>
-</li>
-</ol>
-<p>完成上面四步后，电脑就可成功连接指定 WiFi 了，并且下次开机时，电脑也会自动连接该 WiFi。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>命令行</tag>
-        <tag>WiFi 配置</tag>
       </tags>
   </entry>
   <entry>
@@ -228,69 +294,117 @@ S_{SM4}(x) = M_2 * S_{AES}(M_1 * x + C_1) + C_2 \tag{5}</script><p>至此，我�
       </tags>
   </entry>
   <entry>
-    <title>Markdown 常用公式</title>
-    <url>/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/</url>
-    <content><![CDATA[<h4 id="常见公式"><a href="#常见公式" class="headerlink" title="常见公式"></a>常见公式</h4><div class="table-container">
+    <title>计算机基础</title>
+    <url>/2022/02/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h3 id="计算机硬件组成"><a href="#计算机硬件组成" class="headerlink" title="计算机硬件组成"></a>计算机硬件组成</h3><p>现代计算机以冯·诺伊曼结构为基础，由中央处理器（CPU）、内存、外存、输入和输出设备组成，如图 1 所示。</p>
+<p><img src="/2022/02/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/计算机硬件组成.png" alt="img"></p>
+<span id="more"></span>
+<ul>
+<li><p>CPU 指令集分为精简指令集（RISC）和复杂指令集（CISC），ARM 指令集属于 RISC，x86 指令集属于 CISC。CPU 由<strong>控制单元（CU）</strong>和<strong>算术逻辑单元（ALU）</strong>组成。CU 是计算机的指挥系统，一般由指令寄存器、指令译码器、时序电路和控制电路组成，基本功能是从内存取指令和执行指令。ALU 则负责完成算术运算和逻辑运算。</p>
+</li>
+<li><p>内存是易失型存储器，包括动态随机存储（DRAM）、静态随机存储（SRAM）以及只读存储器（ROM），其中，SRAM 一般用于制作缓存，ROM 用来存储 BIOS 或固件程序。程序必须被加载进内存才能被执行。</p>
+</li>
+<li><p>外存是非易失型存储器，主要包括硬盘（HDD）、固态硬盘（SSD），用于永久性存储文件数据。</p>
+</li>
+<li><p>输入设备主要包括键盘、鼠标和体感设备等，输出设备包括显卡、打印机、扬声器、蓝牙耳机、投影仪等。</p>
+</li>
+<li><p>主板负责将 CPU、内存、外存、输入输出设备组织在一起。其中，CPU 通过 <strong>北桥</strong> 与内存和显存连接在一起，输入输出设备则通过 <strong>南桥</strong> 与 CPU 进行交互。主板主要提供了以下功能：</p>
+<p>1）设备 I/O 地址与 IRQ 中断请求</p>
+<p>主板负责各个电脑组件之间的通信，通过 <strong>I/O</strong> 地址识别不同的设备，一般而言，不同的设备不能共享同一个设备 I/O 地址。各个设备可以通过 <strong>IRQ 中断请求</strong> 来告知 CPU 该设备的当前状态，以方便 CPU 进行工作任务的分配。</p>
+<p>2）CMOS 与 BIOS</p>
+<p>CMOS 主要功能为 <strong>记录主板上面的重要参数</strong>，包括系统时间、CPU 电压与频率、各项设备的 I/O 地址与 IRQ 等，由于这些数据的记录要用电，因此主板上面有一块电池。BIOS 是写入到主板上某一块 flash 或 EEPROM 的程序，它可以在计算机启动的时候执行，以 <strong>加载或修改 CMOS 当中的参数，并尝试调用存储设备中的引导程序</strong>，进一步进入操作系统当中。</p>
+<p>3）连接外置设备的接口</p>
+<p>主板上面包含各种连接外置设备的接口，包括：</p>
+<ul>
+<li><p>PS/2 接口：原本是常见的键盘与鼠标的接口，逐渐被 USB 接口取代；</p>
+</li>
+<li><p>USB 接口：分为 USB2.0 和 USB3.0</p>
+</li>
+<li><p>RJ-45 网络头：负责连接网线</p>
+</li>
+<li><p>HDMI：负责连接显示屏幕，可同时传输声音与图像。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><p>主流操作系统分为 Windows 操作系统、Linux 操作系统、Macos 操作系统、Android 操作系统与苹果操作系统等，主要提供了如下功能：</p>
+<ul>
+<li><p>系统调用接口</p>
+<p>对硬件资源进行抽象，向上层应用程序提供一个统一的编程接口</p>
+</li>
+<li><p>进程管理</p>
+<p>支持多任务处理</p>
+</li>
+<li><p>内存管理</p>
+<p>实现内存资源的分配与回收，支持虚拟内存，当内存不足时通过硬盘交换分区实现进程切换</p>
+</li>
+<li><p>文件系统管理</p>
+<p>实现外存资源的分配与回收</p>
+</li>
+<li><p>驱动管理</p>
+<p>通过驱动程序对硬件进行管理，事先将驱动程序编译成模块，并通过操作系统提供的可加载模块功能加载到操作系统内核空间中</p>
+</li>
+</ul>
+<p>Linux 操作系统中继承了 Minix 操作系统的设计哲学，即<strong>所有的程序或系统设备都是文件</strong>。各硬件设备在 Linux 中的文件名如表 1 所示。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th style="text-align:left">符号</th>
-<th>规则</th>
-<th style="text-align:left">符号</th>
-<th style="text-align:left">规则</th>
+<th><strong>设备</strong></th>
+<th><strong>设备在 Linux 中的文件名</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">$T^{\prime}$</td>
-<td><code>T^&#123;\prime&#125;</code></td>
-<td style="text-align:left">$\oplus$</td>
-<td style="text-align:left"><code>\oplus</code></td>
+<td>SCSI、SATA、USB 磁盘驱动器</td>
+<td>/dev/sd[a-p]</td>
 </tr>
 <tr>
-<td style="text-align:left">$\gets$</td>
-<td><code>\gets</code></td>
-<td style="text-align:left">$\to$</td>
-<td style="text-align:left"><code>\to</code></td>
+<td>U 盘</td>
+<td>/dev/sd[a-p] （与 SATA 相同）</td>
 </tr>
 <tr>
-<td style="text-align:left">$\times$</td>
-<td><code>\times</code></td>
-<td style="text-align:left">$\div$</td>
-<td style="text-align:left"><code>\div</code></td>
+<td>Virtio 接口</td>
+<td>/dev/vd[a-p] （用于虚拟机内）</td>
 </tr>
 <tr>
-<td style="text-align:left">$\sim$</td>
-<td><code>\sim</code></td>
-<td style="text-align:left">$\approx$</td>
-<td style="text-align:left"><code>\approx</code></td>
+<td>软盘驱动器</td>
+<td>/dev/fd[0-7]</td>
 </tr>
 <tr>
-<td style="text-align:left">$\ll$</td>
-<td><code>\ll</code></td>
-<td style="text-align:left">$\gg$</td>
-<td style="text-align:left"><code>\gg</code></td>
+<td>打印机</td>
+<td>/dev/lp[0-2] （25 针打印机）<br>/dev/usb/lp[0-15] （USB 接口）</td>
 </tr>
 <tr>
-<td style="text-align:left">$\lll$</td>
-<td><code>\lll</code></td>
-<td style="text-align:left">$\mathop{\lll}\limits_{32}$</td>
-<td style="text-align:left"><code>\mathop&#123;\lll&#125;\limits_&#123;32&#125;</code></td>
+<td>鼠标</td>
+<td>/dev/input/mouse[0-15] （通用）<br>/dev/psaux （PS/2 接口）<br>/dev/mouse （当前鼠标）</td>
 </tr>
 <tr>
-<td style="text-align:left"></td>
-<td></td>
-<td style="text-align:left"></td>
+<td>CD-ROM、DVD-ROM</td>
+<td>/dev/scd[0-1] （通用）<br>/dev/sr[0-1] （通用，CentOS 较常见）<br>/dev/cdrom    （当前 CD-ROM）</td>
+</tr>
+<tr>
+<td>磁带机</td>
+<td>/dev/ht0 （IDE 接口）<br>/dev/st0  （SATA/SCSI 接口）<br>/dev/tape （当前磁带）</td>
+</tr>
+<tr>
+<td>IDE 磁盘驱动器</td>
+<td>/dev/hd[a-d] （旧式系统才有）</td>
 </tr>
 </tbody>
 </table>
 </div>
+<h4 id="磁盘分区"><a href="#磁盘分区" class="headerlink" title="磁盘分区"></a>磁盘分区</h4><p>磁盘主要由碟片、磁头、机械手臂与主轴马达所组成，碟片用于存储数据，磁头用于写入和读取数据。碟片上面又细分为磁道（Track）和扇区（Sector），所有碟片的同一个磁道被称为柱面（Cylinder）。扇区的物理大小分为 512 字节和 4K 字节两种，典型的碟片示意图如图 2 所示。</p>
+<p>物理硬盘无法直接被使用，只有在该硬盘上划分出分区后，才能够使用。其实仅仅划分出分区后，这块硬盘仍然是不能被使用的，需要在划分好的分区上创建文件系统，比如 FAT 或 NTFS，之后才能够被使用。</p>
+<p>常见的磁盘分区格式分为 MBR（Master Boot Record）格式和 GPT（GUID partition table）格式两种。在 MBR 格式中，扇区位置使用<strong>（柱面号 C、磁头 H、扇区号 S）</strong>来表示，最大支持 4TB 的硬盘空间。</p>
+<h4 id="启动流程"><a href="#启动流程" class="headerlink" title="启动流程"></a>启动流程</h4><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://www.zhihu.com/question/267274971">MBR分区格式最大支持容量</a></p>
+<p><a href="https://www.eassos.cn/jiao-cheng/ying-pan/mbr-vs-gpt.php">MBR 与 GPT，关于分区表你应该知道的一些知识</a></p>
 ]]></content>
       <categories>
-        <category>Markdown</category>
+        <category>计算机基础</category>
       </categories>
       <tags>
-        <tag>公式符号</tag>
+        <tag>计算机基础</tag>
       </tags>
   </entry>
   <entry>
@@ -426,132 +540,6 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
         <tag>hexo</tag>
         <tag>github 博客</tag>
         <tag>gitee 博客</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机基础</title>
-    <url>/2022/02/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h3 id="计算机硬件组成"><a href="#计算机硬件组成" class="headerlink" title="计算机硬件组成"></a>计算机硬件组成</h3><p>现代计算机以冯·诺伊曼结构为基础，由中央处理器（CPU）、内存、外存、输入和输出设备组成，如图 1 所示。</p>
-<p><img src="/2022/02/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/计算机硬件组成.png" alt="img"></p>
-<ul>
-<li><p>CPU 指令集分为精简指令集（RISC）和复杂指令集（CISC），ARM 指令集属于 RISC，x86 指令集属于 CISC。CPU 由<strong>控制单元（CU）</strong>和<strong>算术逻辑单元（ALU）</strong>组成。CU 是计算机的指挥系统，一般由指令寄存器、指令译码器、时序电路和控制电路组成，基本功能是从内存取指令和执行指令。ALU 则负责完成算术运算和逻辑运算。</p>
-</li>
-<li><p>内存是易失型存储器，包括动态随机存储（DRAM）、静态随机存储（SRAM）以及只读存储器（ROM），其中，SRAM 一般用于制作缓存，ROM 用来存储 BIOS 或固件程序。程序必须被加载进内存才能被执行。</p>
-</li>
-<li><p>外存是非易失型存储器，主要包括硬盘（HDD）、固态硬盘（SSD），用于永久性存储文件数据。</p>
-</li>
-<li><p>输入设备主要包括键盘、鼠标和体感设备等，输出设备包括显卡、打印机、扬声器、蓝牙耳机、投影仪等。</p>
-</li>
-<li><p>主板负责将 CPU、内存、外存、输入输出设备组织在一起。其中，CPU 通过 <strong>北桥</strong> 与内存和显存连接在一起，输入输出设备则通过 <strong>南桥</strong> 与 CPU 进行交互。主板主要提供了以下功能：</p>
-<p>1）设备 I/O 地址与 IRQ 中断请求</p>
-<p>主板负责各个电脑组件之间的通信，通过 <strong>I/O</strong> 地址识别不同的设备，一般而言，不同的设备不能共享同一个设备 I/O 地址。各个设备可以通过 <strong>IRQ 中断请求</strong> 来告知 CPU 该设备的当前状态，以方便 CPU 进行工作任务的分配。</p>
-<p>2）CMOS 与 BIOS</p>
-<p>CMOS 主要功能为 <strong>记录主板上面的重要参数</strong>，包括系统时间、CPU 电压与频率、各项设备的 I/O 地址与 IRQ 等，由于这些数据的记录要用电，因此主板上面有一块电池。BIOS 是写入到主板上某一块 flash 或 EEPROM 的程序，它可以在计算机启动的时候执行，以 <strong>加载或修改 CMOS 当中的参数，并尝试调用存储设备中的引导程序</strong>，进一步进入操作系统当中。</p>
-<p>3）连接外置设备的接口</p>
-<p>主板上面包含各种连接外置设备的接口，包括：</p>
-<ul>
-<li><p>PS/2 接口：原本是常见的键盘与鼠标的接口，逐渐被 USB 接口取代；</p>
-</li>
-<li><p>USB 接口：分为 USB2.0 和 USB3.0</p>
-</li>
-<li><p>RJ-45 网络头：负责连接网线</p>
-</li>
-<li><p>HDMI：负责连接显示屏幕，可同时传输声音与图像。</p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><p>主流操作系统分为 Windows 操作系统、Linux 操作系统、Macos 操作系统、Android 操作系统与苹果操作系统等，主要提供了如下功能：</p>
-<ul>
-<li><p>系统调用接口</p>
-<p>对硬件资源进行抽象，向上层应用程序提供一个统一的编程接口</p>
-</li>
-<li><p>进程管理</p>
-<p>支持多任务处理</p>
-</li>
-<li><p>内存管理</p>
-<p>实现内存资源的分配与回收，支持虚拟内存，当内存不足时通过硬盘交换分区实现进程切换</p>
-</li>
-<li><p>文件系统管理</p>
-<p>实现外存资源的分配与回收</p>
-</li>
-<li><p>驱动管理</p>
-<p>通过驱动程序对硬件进行管理，事先将驱动程序编译成模块，并通过操作系统提供的可加载模块功能加载到操作系统内核空间中</p>
-</li>
-</ul>
-<p>Linux 操作系统中继承了 Minix 操作系统的设计哲学，即<strong>所有的程序或系统设备都是文件</strong>。各硬件设备在 Linux 中的文件名如表 1 所示。</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th><strong>设备</strong></th>
-<th><strong>设备在 Linux 中的文件名</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SCSI、SATA、USB 磁盘驱动器</td>
-<td>/dev/sd[a-p]</td>
-</tr>
-<tr>
-<td>U 盘</td>
-<td>/dev/sd[a-p] （与 SATA 相同）</td>
-</tr>
-<tr>
-<td>Virtio 接口</td>
-<td>/dev/vd[a-p] （用于虚拟机内）</td>
-</tr>
-<tr>
-<td>软盘驱动器</td>
-<td>/dev/fd[0-7]</td>
-</tr>
-<tr>
-<td>打印机</td>
-<td>/dev/lp[0-2] （25 针打印机）<br>/dev/usb/lp[0-15] （USB 接口）</td>
-</tr>
-<tr>
-<td>鼠标</td>
-<td>/dev/input/mouse[0-15] （通用）<br>/dev/psaux （PS/2 接口）<br>/dev/mouse （当前鼠标）</td>
-</tr>
-<tr>
-<td>CD-ROM、DVD-ROM</td>
-<td>/dev/scd[0-1] （通用）<br>/dev/sr[0-1] （通用，CentOS 较常见）<br>/dev/cdrom    （当前 CD-ROM）</td>
-</tr>
-<tr>
-<td>磁带机</td>
-<td>/dev/ht0 （IDE 接口）<br>/dev/st0  （SATA/SCSI 接口）<br>/dev/tape （当前磁带）</td>
-</tr>
-<tr>
-<td>IDE 磁盘驱动器</td>
-<td>/dev/hd[a-d] （旧式系统才有）</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h4 id="磁盘分区"><a href="#磁盘分区" class="headerlink" title="磁盘分区"></a>磁盘分区</h4><p>磁盘主要由碟片、磁头、机械手臂与主轴马达所组成，碟片用于存储数据，磁头用于写入和读取数据。碟片上面又细分为磁道（Track）和扇区（Sector），所有碟片的同一个磁道被称为柱面（Cylinder）。扇区的物理大小分为 512 字节和 4K 字节两种，典型的碟片示意图如图 2 所示。</p>
-<p>物理硬盘无法直接被使用，只有在该硬盘上划分出分区后，才能够使用。其实仅仅划分出分区后，这块硬盘仍然是不能被使用的，需要在划分好的分区上创建文件系统，比如 FAT 或 NTFS，之后才能够被使用。</p>
-<p>常见的磁盘分区格式分为 MBR（Master Boot Record）格式和 GPT（GUID partition table）格式两种。在 MBR 格式中，扇区位置使用<strong>（柱面号 C、磁头 H、扇区号 S）</strong>来表示，最大支持 4TB 的硬盘空间。</p>
-<h4 id="启动流程"><a href="#启动流程" class="headerlink" title="启动流程"></a>启动流程</h4><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://www.zhihu.com/question/267274971">MBR分区格式最大支持容量</a></p>
-<p><a href="https://www.eassos.cn/jiao-cheng/ying-pan/mbr-vs-gpt.php">MBR 与 GPT，关于分区表你应该知道的一些知识</a></p>
-]]></content>
-      <categories>
-        <category>计算机基础</category>
-      </categories>
-      <tags>
-        <tag>计算机基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机视觉论文推荐</title>
-    <url>/2021/12/24/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E8%AE%BA%E6%96%87%E6%8E%A8%E8%8D%90/</url>
-    <content><![CDATA[<h4 id="3D-重建"><a href="#3D-重建" class="headerlink" title="3D 重建"></a>3D 重建</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@misc&#123;yu2021plenoxels,</span><br><span class="line">      title=&#123;Plenoxels: Radiance Fields without Neural Networks&#125;, </span><br><span class="line">      author=&#123;&#123;Alex Yu and Sara Fridovich-Keil&#125; and Matthew Tancik and Qinhong Chen and Benjamin Recht and Angjoo Kanazawa&#125;,</span><br><span class="line">      year=&#123;2021&#125;,</span><br><span class="line">      eprint=&#123;2112.05131&#125;,</span><br><span class="line">      archivePrefix=&#123;arXiv&#125;,</span><br><span class="line">      primaryClass=&#123;cs.CV&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>计算机视觉</category>
-      </categories>
-      <tags>
-        <tag>计算机视觉</tag>
-        <tag>模式识别</tag>
       </tags>
   </entry>
   <entry>
