@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"clinale.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Tun&#x2F;Tap 虚拟网卡Tun&#x2F;Tap 驱动程序实现了虚拟网卡的功能, Tun 表示虚拟的是点对点设备, Tap 表示虚拟的是以太网设备, 这两种设备针对网络包实施不同的封装. 利用 Tun&#x2F;Tap 驱动, 可以将 TCP&#x2F;IP 协议栈处理好的网络分包传给任何一个使用 Tun&#x2F;Tap 驱动的进程, 由进程重新处理后再发送到物理链路中.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tun&#x2F;tap虚拟桥接">
+<meta property="og:url" content="https://clinale.github.io/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/index.html">
+<meta property="og:site_name" content="Clinale&#39;s Blog">
+<meta property="og:description" content="Tun&#x2F;Tap 虚拟网卡Tun&#x2F;Tap 驱动程序实现了虚拟网卡的功能, Tun 表示虚拟的是点对点设备, Tap 表示虚拟的是以太网设备, 这两种设备针对网络包实施不同的封装. 利用 Tun&#x2F;Tap 驱动, 可以将 TCP&#x2F;IP 协议栈处理好的网络分包传给任何一个使用 Tun&#x2F;Tap 驱动的进程, 由进程重新处理后再发送到物理链路中.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://clinale.github.io/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/bridge.png">
+<meta property="article:published_time" content="2022-05-22T06:42:55.000Z">
+<meta property="article:modified_time" content="2022-05-22T08:03:22.407Z">
+<meta property="article:author" content="Clinale">
+<meta property="article:tag" content="tun&#x2F;tap">
+<meta property="article:tag" content="虚拟桥接">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://clinale.github.io/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/bridge.png">
+
+<link rel="canonical" href="https://clinale.github.io/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>tun/tap虚拟桥接 | Clinale's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Clinale's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          tun/tap虚拟桥接
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-22 14:42:55 / 修改时间：16:03:22" itemprop="dateCreated datePublished" datetime="2022-05-22T14:42:55+08:00">2022-05-22</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="Tun-Tap-虚拟网卡"><a href="#Tun-Tap-虚拟网卡" class="headerlink" title="Tun/Tap 虚拟网卡"></a>Tun/Tap 虚拟网卡</h4><p>Tun/Tap 驱动程序实现了虚拟网卡的功能, Tun 表示虚拟的是点对点设备, Tap 表示虚拟的是以太网设备, 这两种设备针对网络包实施不同的封装. 利用 Tun/Tap 驱动, 可以将 TCP/IP 协议栈处理好的网络分包传给任何一个使用 Tun/Tap 驱动的进程, 由进程重新处理后再发送到物理链路中. </p>
+<span id="more"></span>
+<p>开源项目 <a target="_blank" rel="noopener" href="https://github.com/smoltcp-rs/smoltcp">smoltcp</a>、<a target="_blank" rel="noopener" href="https://github.com/nihalpasham/rustdhipv2">rustdhipv2</a> 都用到了 tun/tap 驱动实现的网络协议栈封装.</p>
+<h4 id="Tun-Tap-驱动程序工作原理"><a href="#Tun-Tap-驱动程序工作原理" class="headerlink" title="Tun/Tap 驱动程序工作原理"></a>Tun/Tap 驱动程序工作原理</h4><p> 作为虚拟网卡驱动, Tun/Tap 驱动程序的数据接收和发送并不直接和真实网卡打交道, 而是 <strong><em>在 Linux 内核中添加了一个 Tun/Tap 虚拟网络设备的驱动程序和一个与之相关连的字符设备 /dev/net/tun</em></strong>, 字符设备 <strong><em>/dev/net/tun</em></strong> 作为用户空间和内核空间交换数据的接口.</p>
+<p>当内核将数据包发送到虚拟网络设备时, 数据包被保存在设备相关的一个队 列中, 直到用户空间程序通过打开的字符设备 <strong><em>/dev/net/tun</em></strong> 的描述符读取时, 它才会被拷贝到用户空间的缓冲区中, 其效果就相当于数据包直接发送到了用户空间. 通过系统调用 write 发送数据包时其原理与此类似.</p>
+<p> Tun/Tap 驱动程序中包含两个部分: 一部分是字符设备驱动, 还有一部分是网卡驱动部分. 利用网卡驱动部分接收来自 TCP/IP 协议栈的网络分包并发送或者反过来将接收到的网络分包传给协议栈处理; 而字符驱动部分则将网络分包在用户空间和内核空间之间传送, 模拟物理链路的数据接收和发送. </p>
+<h4 id="创建和配置虚拟网桥"><a href="#创建和配置虚拟网桥" class="headerlink" title="创建和配置虚拟网桥"></a>创建和配置虚拟网桥</h4><p>Tun/Tap 通常用来创建虚拟网卡 Tap 和搭建虚拟网桥, 如图 1 所示.</p>
+<p><img src="/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/bridge.png" alt></p>
+<p align="center">图 1. 虚拟网桥</p>
+
+<p>创建如上所示的网络拓扑所需步骤如下.</p>
+<ul>
+<li><p>安装两个配置网络所需的软件包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install bridge-utils</span><br><span class="line">sudo apt install uml-utilities</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建虚拟网桥 <code>br0</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo brctl addbr br0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将主机真实物理网卡的 IP 地址配置为 <code>0.0.0.0</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ifconfig eth0 0.0.0.0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将主机真实物理网卡添加到虚拟网桥 <code>br0</code> 中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo brctl addif br0 eth0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为虚拟网桥 <code>br0</code> 配置 IP 地址</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 方式一, 使用 dhclient 自动配置</span></span><br><span class="line">sudo dhclient br0</span><br><span class="line"><span class="meta">#</span><span class="bash"> 方式二, 使用 ifconfig 手动配置, 需同时配置路由表</span></span><br><span class="line">sudo ifconfig br0 &lt;ip&gt;</span><br><span class="line">sudo iptables -t nat -A POSTROUTING -s &lt;ip_mask&gt; -j MASQUERADE</span><br><span class="line">sudo sysctl net.ipv4.ip_forward=1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建 tun/tap 虚拟网卡</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tunctl -t tap0 -u $(whoami)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动 tun/tap 虚拟网卡, 并将其加入到虚拟网桥 <code>br0</code> 中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ifconfig tap0 up</span><br><span class="line">sudo brctl addif br0 tap0</span><br></pre></td></tr></table></figure>
+<p>可以根据需要对任意数量的 Tap 接口重复最后 2 个步骤, 然后可以为这些 Tap 接口提供 IP 地址, 或者可以开始将 Tap 接口绑定到各种 VM 和仿真器中以相互使用.</p>
+</li>
+</ul>
+<h4 id="删除虚拟网卡-网桥"><a href="#删除虚拟网卡-网桥" class="headerlink" title="删除虚拟网卡/网桥"></a>删除虚拟网卡/网桥</h4><ul>
+<li><p>删除虚拟网卡</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tunctl -d &lt;tap_name&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将虚拟网卡 <code>tap0</code> 从虚拟网桥 <code>br0</code> 中移除</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo brctl delif br0 tap0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除虚拟网桥</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ifconfig &lt;br_name&gt; down</span><br><span class="line">sudo brctl delbr &lt;br_name&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="样例介绍"><a href="#样例介绍" class="headerlink" title="样例介绍"></a>样例介绍</h4><h5 id="Qemu-虚拟机与外部网络通信"><a href="#Qemu-虚拟机与外部网络通信" class="headerlink" title="Qemu 虚拟机与外部网络通信"></a><strong>Qemu 虚拟机与外部网络通信</strong></h5><ol>
+<li>Qemu 通信机制</li>
+</ol>
+<p>为了使虚拟机能够与外界通信, Qemu 需要为虚拟机提供网络设备. Qemu 支持的常用网卡包括 NE2000、rtl8139、pcnet32 等. 命令行上使用 <code>-net nic</code> 选项为虚拟机创建虚拟机网卡. 例如, 命令行选项</p>
+<p align="center">-net nic,model=pcnet</p>
+
+<p>表示为虚拟机添加一块 <code>pcnet</code> 类型的以太网卡. 如果省略 <code>model</code> 参数, qemu 会默认选择一种网卡类型, 可以在虚拟机启动后执行 <code>lspci</code> 命令查看. 有了虚拟网络设备, 下面的问题是如何用这些设备来联网.</p>
+<p>首先, 虚拟机的网络设备连接在qemu 虚拟的 VLAN 中. 每个 qemu 的运行实例是宿主机中的一个进程, 而每个这样的进程中可以虚拟一些 VLAN, 虚拟机网络设备接入这些VLAN中. 当某个 VLAN 上连接的网络设备发送数据帧, 与它在同一个 VLAN 中的其它网络设备都能接收到数据帧. 上面的例子中对虚拟机的 pcnet 网卡没有指定其连接的 VLAN 号, 那么 qemu 默认会将该网卡连入vlan0. 下面这个例子更具一般性：</p>
+   <p align="center">-net nic,model=pcnet -net nic,model=rtl8139,vlan=1, -net nic,model=ne2k_pci,vlan=1</p>
+
+<p>该命令为虚拟机创建了三块网卡: 其中第一块网卡类型是 pcnet, 连入vlan0; 第二块网卡类型是 rtl8139, 第三块网卡类型是 ne2k_pci, 这两块都连入vlan1. 所以第二块网卡与第三块网卡可以互相通信, 但它们与第一块网卡不能直接通信.</p>
+<p>接下来, 各个 VLAN 再通过 qemu 提供的 4 种通信方式与外界联网, 包括: <strong>User mode stack、socket、TAP、VDE</strong>. 这里重点介绍 <strong>TAP</strong> 通信方式.</p>
+<ul>
+<li><p><strong>TAP</strong></p>
+<p>这种方式首先需要在宿主机中<em>创建并配置一个 TAP 设备</em>, qemu 进程将该 TAP 设备连接到虚拟机 VLAN 中. 其次, 为了实现虚拟机与外部网络的通信, 在宿主机中通常还要<em>创建并配置一个网桥</em>，并将<em>宿主机的网络接口（通常是 eth0）作为该网桥的一个接口</em>. 最后, 只要<em>将 TAP 设备作为网桥的另一个接口</em>, 虚拟机 VLAN 通过 TAP 设备就可以与外部网络完全通信了. </p>
+<p>这是因为, 宿主机的 eth0 接口作为网桥的接口, 与外部网络连接; TAP 设备作为网桥的另一个接口, 与虚拟机 VLAN 连接, 这样两个网络就连通了. 此时, 网桥在这两个网络之间转发数据帧.<br>这里有两个问题需要注意：<br>（1）网桥的转发工作需要得到内核的支持, 所以在编译宿主机内核时需要选择与桥接相关的配置选项;<br>（2）当宿主机 eth0 接口作为网桥接口时, 不能为其配置 IP 地址, 而要位将IP地址配置给网桥.</p>
+</li>
+</ul>
+<ol>
+<li>Qemu 运行实例</li>
+</ol>
+<p>假设已经按照图 1 配置好 <em>tap0、br0 以及 eth0</em> 桥接模型, 这里以 <code>ubuntu16-x86_64.iso</code> 为例介绍如何启动 qemu:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">SYSTEMISO=&quot;./ubuntu-16.04.7-desktop-amd64.iso&quot;</span><br><span class="line">DISKFILE=&quot;./ubuntu-hd.qcow2&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> BIOS=<span class="string">&quot;./QEMU_EFI.fd&quot;</span></span></span><br><span class="line"></span><br><span class="line">if [ ! -e $SYSTEMISO ]; then</span><br><span class="line">	echo &quot;ISO $SYSTEMISO does NOT exist&quot;</span><br><span class="line">	exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ ! -e $DISKFILE ]; then</span><br><span class="line">	echo &quot;formating $DISKFILE&quot;</span><br><span class="line">	qemu-img create -f qcow2 $DISKFILE 30G</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">qemu-system-x86_64 -machine type=q35,accel=kvm -m 2048 -smp 1 \</span><br><span class="line">	-hda $DISKFILE \</span><br><span class="line">	-cdrom $SYSTEMISO \</span><br><span class="line">	-vga virtio \</span><br><span class="line">	-usb \</span><br><span class="line">	-device usb-tablet \</span><br><span class="line">	-net nic \</span><br><span class="line">	-net tap,ifname=tap0,script=no,downscript=no</span><br></pre></td></tr></table></figure>
+<p>如果省略 <code>script</code> 和 <code>downscript</code> 参数, qemu 在启动时会以第一个不存在的 tap 接口名（通常是 tap0）为参数去调用 <em>/etc/qemu-ifup</em> 脚本, 而在退出时调用 <em>/etc/qemu-ifdown</em> 脚本. 这两个脚本需要用户自行编写, 其主要作用通常是: 在启动时创建和打开指定的 TAP 接口, 并将该接口添加到虚拟网桥中; 退出时将该接口从虚拟网桥中移除, 然后关闭该接口. 由于配置 TAP 设备的操作前面已经做过了, 所以启动 qemu 时显式地告诉 qemu 不要执行这两个脚本.</p>
+<p><strong><em>注意：如果是桥接模型, 则需要为虚拟网桥 <code>br0</code> 配置路由表项; 如果是 TAP 模型, 则需要为 TAP 虚拟网卡配置路由表项 !!!</em></strong></p>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a target="_blank" rel="noopener" href="https://www.linux.com/training-tutorials/howto-make-virtual-bridged-network/">Howto make a virtual bridged network</a></p>
+<p><a target="_blank" rel="noopener" href="https://developers.redhat.com/blog/2018/10/22/introduction-to-linux-interfaces-for-virtual-networking#">Introduction to Linux interfaces for virtual networking</a></p>
+<p><a target="_blank" rel="noopener" href="https://stty.io/2019/05/13/qemu-vm-wireguard-vpn-tun-tap-networking/">Setting up TUN/TAP networking for QEMU VM’s (and bonus wireguard)</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-26061689-id-2981914.html">qemu虚拟机与外部网络的通信</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhaihaifei/article/details/23168621">tunctl添加虚拟网卡TUN/TAP与brctl添加网桥</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/43590414">Linux中本机和本机Socket通信会走网卡吗</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_29214715/article/details/116694596">linux 多块网卡 bridge,理解linux虚拟网络设备bridge</a></p>
+<h4 id="smoltcp-issue"><a href="#smoltcp-issue" class="headerlink" title="smoltcp issue"></a>smoltcp issue</h4><p><a target="_blank" rel="noopener" href="https://github.com/smoltcp-rs/smoltcp/issues/97">segment not in receive window in server example</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tun-tap/" rel="tag"># tun/tap</a>
+              <a href="/tags/%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/" rel="tag"># 虚拟桥接</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/19/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%82%E8%BD%BD%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95/" rel="prev" title="虚拟机挂载共享目录">
+      <i class="fa fa-chevron-left"></i> 虚拟机挂载共享目录
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Tun-Tap-%E8%99%9A%E6%8B%9F%E7%BD%91%E5%8D%A1"><span class="nav-number">1.</span> <span class="nav-text">Tun&#x2F;Tap 虚拟网卡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tun-Tap-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">Tun&#x2F;Tap 驱动程序工作原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E9%85%8D%E7%BD%AE%E8%99%9A%E6%8B%9F%E7%BD%91%E6%A1%A5"><span class="nav-number">3.</span> <span class="nav-text">创建和配置虚拟网桥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%99%9A%E6%8B%9F%E7%BD%91%E5%8D%A1-%E7%BD%91%E6%A1%A5"><span class="nav-number">4.</span> <span class="nav-text">删除虚拟网卡&#x2F;网桥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E4%BB%8B%E7%BB%8D"><span class="nav-number">5.</span> <span class="nav-text">样例介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Qemu-%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8E%E5%A4%96%E9%83%A8%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1"><span class="nav-number">5.1.</span> <span class="nav-text">Qemu 虚拟机与外部网络通信</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">6.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#smoltcp-issue"><span class="nav-number">7.</span> <span class="nav-text">smoltcp issue</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Clinale"
+      src="/images/yuanshen.jpg">
+  <p class="site-author-name" itemprop="name">Clinale</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Clinale" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Clinale" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2362465844@qq.com" title="E-Mail → 2362465844@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">2021 by Clinale</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

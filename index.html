@@ -183,6 +183,142 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/" class="post-title-link" itemprop="url">tun/tap虚拟桥接</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-22 14:42:55 / 修改时间：16:03:22" itemprop="dateCreated datePublished" datetime="2022-05-22T14:42:55+08:00">2022-05-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="Tun-Tap-虚拟网卡"><a href="#Tun-Tap-虚拟网卡" class="headerlink" title="Tun/Tap 虚拟网卡"></a>Tun/Tap 虚拟网卡</h4><p>Tun/Tap 驱动程序实现了虚拟网卡的功能, Tun 表示虚拟的是点对点设备, Tap 表示虚拟的是以太网设备, 这两种设备针对网络包实施不同的封装. 利用 Tun/Tap 驱动, 可以将 TCP/IP 协议栈处理好的网络分包传给任何一个使用 Tun/Tap 驱动的进程, 由进程重新处理后再发送到物理链路中. </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/05/22/tun-tap%E8%99%9A%E6%8B%9F%E6%A1%A5%E6%8E%A5/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/05/19/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%82%E8%BD%BD%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/19/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%82%E8%BD%BD%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95/" class="post-title-link" itemprop="url">虚拟机挂载共享目录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-19 10:50:35" itemprop="dateCreated datePublished" datetime="2022-05-19T10:50:35+08:00">2022-05-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-22 16:03:58" itemprop="dateModified" datetime="2022-05-22T16:03:58+08:00">2022-05-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="安装-vmware-tools"><a href="#安装-vmware-tools" class="headerlink" title="安装 vmware-tools"></a>安装 vmware-tools</h4><p>参考链接1。</p>
+<h4 id="挂载目录"><a href="#挂载目录" class="headerlink" title="挂载目录"></a>挂载目录</h4><p>若重启后，发现共享文件夹不显示，则检查 vmware-tools 服务是否没有启动，执行以下命令启动服务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service vmware-tools start</span><br></pre></td></tr></table></figure>
+<p>或者执行如下命令手动挂载：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方式一</span></span><br><span class="line">vmhgfs-fuse -o subtype=vmhgfs-fuse,allow_other /mnt/hgfs/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式二</span></span><br><span class="line">mount -f vmhgfs .host:/ /mnt/hgfs</span><br></pre></td></tr></table></figure>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/woodyoilove/p/8479458.html">vmware Linux虚拟机挂载共享文件夹</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/04/10/NEON-%E6%8C%87%E4%BB%A4%E9%80%9F%E6%9F%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -938,7 +1074,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -951,7 +1087,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
