@@ -547,4 +547,150 @@ ck_{i,j} = (4*i+j)*7 (mod 256)</script><p>根据此计算方法，可以计算�
         <tag>虚拟桥接</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Emulating x86 AES Intrinsics on ARMv8-A</title>
+    <url>/2022/06/06/Emulating-x86-AES-Intrinsics-on-ARMv8-A/</url>
+    <content><![CDATA[<blockquote>
+<p>本篇博客翻译自<a href="https://blog.michaelbrase.com/2018/05/08/emulating-x86-aes-intrinsics-on-armv8-a/">Emulating x86 AES Intrinsics on ARMv8-A</a>。</p>
+</blockquote>
+<p>最近，我需要移植一些 C 加密代码才能在 ARMv8-A(aarch64) 处理器上运行。问题在于代码使用了一些 x86 AES 内部函数，编译器在面向 ARM 体系结构时无法识别这些内部函数。<strong>ARMv8-A确实有一个可选的加密扩展</strong>，其中包括几个 AES 指令，但它们的语义与 x86 指令略有不同。我对 AES 没有太多经验，最初发现这非常令人困惑，因为我假设所有 AES 实现都需要以相同的方式工作（毕竟 AES 是一个标准！事实证明，这两种方法都足以实现 AES，但 x86 和 ARM 选择以不同的方式解决问题。</p>
+<span id="more"></span>
+<h4 id="关于-AES-的背景资料"><a href="#关于-AES-的背景资料" class="headerlink" title="关于 AES 的背景资料"></a>关于 AES 的背景资料</h4><p><a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard">高级加密标准(AES)</a> 是常见的对称加密算法，它使用密钥来加密和解密数据。AES 一次加密 16 个字节，并使用 128 位到 256 位的密钥大小。16 字节数据块通过一系列被称为轮次 的步骤进行转换。步骤的顺序是固定的，但轮次数可能因密钥大小而异。例如，AES 标准规定，对于 128 位密钥大小，AES 加密算法将迭代 10 轮。</p>
+<p>AES 每一轮步骤定义为对 16 字节的 $4 \times 4$ 矩阵执行的操作，如下所示：</p>
+<blockquote>
+<p>|b0    b4    b8      b12|<br>|b1    b5    b9      b13|<br>|b2    b6    b10    b14|<br>|b3    b7    b11    b15|</p>
+</blockquote>
+<p>其中 bN 是 16 字节数据块的第 N 个字节。</p>
+<p>AES 每一轮的操作定义如下：</p>
+<ol>
+<li><code>SubBytes</code> — 使用查找表将每个字节映射到唯一的字节值</li>
+<li><code>ShiftRows</code> — 将每行中的字节循环左移不同的值</li>
+<li><code>MixColumns</code> — 通过组合每列中的四个字节进行列混淆</li>
+<li><code>AddRoundKey</code> — 将矩阵中的每个字节和轮密钥进行异或</li>
+</ol>
+<h4 id="Intel-与-ARM-中-AES-加密的比较"><a href="#Intel-与-ARM-中-AES-加密的比较" class="headerlink" title="Intel 与 ARM 中 AES 加密的比较"></a>Intel 与 ARM 中 AES 加密的比较</h4><p>Intel 在 x86 中提供了两条用于加密的 AES 指令，它们与 AES 轮次非常匹配：</p>
+<ol>
+<li><p><code>AESENC</code> — AES Encrypt（Normal Round）</p>
+<p>a. ShiftRows</p>
+<p>b. SubBytes</p>
+<p>c. MixColumns</p>
+<p>d. AddRoundKey</p>
+</li>
+<li><p><code>AESENCLAST</code> — AES Encrypt（Last Round, No <em>MixColumns</em>）</p>
+<p>a. ShiftRows</p>
+<p>b. SubBytes</p>
+<p>c. AddRoundKey</p>
+</li>
+</ol>
+<p>（你可能会注意到这里的 <em>ShiftRows</em> 和 <em>SubBytes</em> 与 AES 标准定义中的位置进行了交换。这没关系，因为这两种操作的位置交换不会改变最终结果。）</p>
+<p>ARM 还提供了两个用于加密的 AES 指令，但稍微模糊了不同加密轮次之间的界限：</p>
+<ol>
+<li><p><code>AESE</code> — AES Encrypt（<em>AddRoundKey</em> is first, No <em>MixColumns</em>）</p>
+<p>a. AddRoundKey</p>
+<p>b. ShiftRows</p>
+<p>c. SubBytes</p>
+</li>
+<li><p><code>AESMC</code> — AES <em>MixCoumns</em></p>
+<p>a. MixColumns</p>
+</li>
+</ol>
+<p>（有关 ARM 指令的详细信息，请参阅<a href="https://developer.arm.com/docs/ddi0487/latest/arm-architecture-reference-manual-armv8-for-armv8-a-architecture-profile">ARM 体系结构手册</a></p>
+<p>以下是 Intel 和 ARM 如何实现三轮 AES 加密：</p>
+<table>
+    <tr>
+        <th>ROUND</th>
+        <th>AES STEPS</th>
+        <th>INTEL</th>
+        <th>ARM</th>
+    </tr>
+    <tr>
+        <td rowspan="5">Round 1</td>
+        <td>AddRoundKey</td>
+        <td>XOR</td>
+        <td rowspan="3">AESE</td>
+    </tr>
+    <tr>
+        <td>SubBytes</td>
+        <td rowspan="4">AESENC</td>
+    </tr>
+    <tr>
+        <td>ShiftRows</td>
+    </tr>
+    <tr>
+        <td>MixColumns</td>
+        <td>AESMC</td>
+    </tr>
+    <tr>
+        <td>AddRoundKey</td>
+        <td rowspan="3">AESE</td>
+    </tr>
+    <!--round 2-->
+    <tr>
+        <td rowspan="4">Round 2</td>
+        <td>SubBytes</td>
+        <td rowspan="4">AESENC</td>
+    </tr>
+    <tr>
+        <td>ShiftRows</td>
+    </tr>
+    <tr>
+        <td>MixColumns</td>
+        <td>AESMC</td>
+    </tr>
+    <tr>
+        <td>AddRoundKey</td>
+        <td rowspan="3">AESE</td>
+    </tr>
+    <!--round 3-->
+    <tr>
+        <td rowspan="3">Round 3</td>
+        <td>SubBytes</td>
+        <td rowspan="3">AESENCLAST</td>
+    </tr>
+    <tr>
+        <td>ShiftRows</td>
+    </tr>
+    <tr>
+        <td>AddRoundKey</td>
+        <td>XOR</td>
+    </tr>
+</table>
+
+<h4 id="使用-ARM-指令实现-AESENC"><a href="#使用-ARM-指令实现-AESENC" class="headerlink" title="使用 ARM 指令实现 AESENC"></a>使用 ARM 指令实现 AESENC</h4><p>我想避免重写我正在移植的算法，所以我决定坚持使用 Intel 语义，并使用 ARM NEON 内部函数和 GCC 矢量扩展重新实现 x86 内部函数。x86 中的内部函数 <code>AESENC</code> 和 <code>AESENCLAST</code> 具有以下<a href="https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=aesenc">原型</a>：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__m128i _mm_aesenc_si128 (__m128i a, __m128i RoundKey);</span><br><span class="line">__m128i _mm_aesenclast_si128 (__m128i a, __m128i RoundKey);</span><br></pre></td></tr></table></figure>
+<p>实现这一目标的第一步是在 ARM 中为 <code>__m128i</code> 定义等效的类型，我将其映射为 NEON 类型 <code>uint8x16_t</code>：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arm_neon.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">uint8x16_t</span> __m128i;</span><br></pre></td></tr></table></figure>
+<p>接下来，我需要想出一系列可用于模拟 x86 <code>AESENC</code> 语义的 ARM 指令。 使用 <code>AESE+AESMC+XOR</code> 将使我们能够接近这个目标，除了 ARM <code>AESE</code>在开始时有一个在 x86 <code>AESENC</code> 中不存在额外的 <code>AddRoundKey</code>。但是，由于 <code>AddRoundKey</code> 只需将密钥与数据进行简单地 XOR，因此密钥值为零会将这一步转换为 NOP。这是最终的实现：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__m128i _mm_aesenc_si128 (__m128i a, __m128i RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> vaesmcq_u8(vaeseq_u8(a, (__m128i)&#123;&#125;)) ^ RoundKey;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__m128i _mm_aesenclast_si128 (__m128i a, __m128i RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> vaeseq_u8(a, (__m128i)&#123;&#125;) ^ RoundKey;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># clang-6.0 -target aarch64-none-linux -march=armv8+crypto -O3</span><br><span class="line"></span><br><span class="line">000000000000003c &lt;_mm_aesenc_si128&gt;:</span><br><span class="line">  3c:   6f00e402        movi    v2.2d, #0x0</span><br><span class="line">  40:   4e284840        aese    v0.16b, v2.16b</span><br><span class="line">  44:   4e286800        aesmc   v0.16b, v0.16b</span><br><span class="line">  48:   6e211c00        eor     v0.16b, v0.16b, v1.16b</span><br><span class="line">  4c:   d65f03c0        ret</span><br><span class="line"></span><br><span class="line">0000000000000050 &lt;_mm_aesenclast_si128&gt;:</span><br><span class="line">  50:   6f00e402        movi    v2.2d, #0x0</span><br><span class="line">  54:   4e284840        aese    v0.16b, v2.16b</span><br><span class="line">  58:   6e211c00        eor     v0.16b, v0.16b, v1.16b</span><br><span class="line">  5c:   d65f03c0        ret</span><br></pre></td></tr></table></figure>
+<h4 id="使用-ARM-指令实现-AESDEC"><a href="#使用-ARM-指令实现-AESDEC" class="headerlink" title="使用 ARM 指令实现 AESDEC"></a>使用 ARM 指令实现 AESDEC</h4><p>有两种方法可以实现 AES 解密算法。第一种称为 “Inverse Cipher”，这种方法只是简单地颠倒加密的步骤顺序。换句话说，不使用 <code>ShiftRows</code>、 <code>SubBytes</code> 和 <code>MixColumns</code>，解密算法使用逆变换 <code>InvShiftRows</code>、<code>InvSubBytes</code> 和 <code>InvMixColumns</code>。第二种方法是一种称为 “Equivalent Inverse Cipher” 的技术，它以不同的方式生成解密密钥，但允许以在硬件中更快地实现的方式对解密步骤进行重新排序。x86 和 ARMv8-A 中的 AES 指令被设计用于第二种解密算法。您可以在<a href="https://www.intel.com/content/dam/doc/white-paper/advanced-encryption-standard-new-instructions-set-paper.pdf">Intel 白皮书</a>中阅读有关它的更多信息。</p>
+<p>Intel 在 x86 中提供了 <code>AESDEC</code> 和 <code>AESDECLAST</code> 指令以帮助实现 AES 解密算法，而 ARM 则提供了 <code>AESD</code> 和 <code>AESIMC</code> 指令。就像加密一样，与其他架构相比，这些指令的语义略有不同。幸运的是，仍然可以使用用一系列 ARM 内部函数替换 Intel 内部函数。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__m128i _mm_aesdec_si128 (__m128i a, __m128i RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> vaesimcq_u8(vaesdq_u8(a, (__m128i)&#123;&#125;)) ^ RoundKey;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__m128i _mm_aesdeclast_si128 (__m128i a, __m128i RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> vaesdq_u8(a, (__m128i)&#123;&#125;) ^ RoundKey;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># clang-6.0 -target aarch64-none-linux -march=armv8+crypto -O3</span><br><span class="line"></span><br><span class="line">0000000000000060 &lt;_mm_aesdec_si128&gt;:</span><br><span class="line">  60:   6f00e402        movi    v2.2d, #0x0</span><br><span class="line">  64:   4e285840        aesd    v0.16b, v2.16b</span><br><span class="line">  68:   4e287800        aesimc  v0.16b, v0.16b</span><br><span class="line">  6c:   6e211c00        eor     v0.16b, v0.16b, v1.16b</span><br><span class="line">  70:   d65f03c0        ret</span><br><span class="line"></span><br><span class="line">0000000000000074 &lt;_mm_aesdeclast_si128&gt;:</span><br><span class="line">  74:   6f00e402        movi    v2.2d, #0x0</span><br><span class="line">  78:   4e285840        aesd    v0.16b, v2.16b</span><br><span class="line">  7c:   6e211c00        eor     v0.16b, v0.16b, v1.16b</span><br><span class="line">  80:   d65f03c0        ret</span><br></pre></td></tr></table></figure>
+<h4 id="使用-ARM-指令实现-AESKEYGENASSIST"><a href="#使用-ARM-指令实现-AESKEYGENASSIST" class="headerlink" title="使用 ARM 指令实现 AESKEYGENASSIST"></a>使用 ARM 指令实现 AESKEYGENASSIST</h4><p>我掩盖了 AES 的一个部分是如何为 <code>AddRoundKey</code> 步骤生成轮函数。AES 标准定义了一种密钥生成算法，Intel 通过 <code>AESKEYGENASSIT</code> 指令实现了密钥生成算法。不幸的是，ARM 没有为 ARMv8-A 提供等效的指令，所以我们必须手动实现。</p>
+<p><a href="https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_aeskeygenassist_si128">Intel 文档</a>为 <code>AESKEYGENASSIT</code> 指令的功能提供了相当精确的定义：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">X3[<span class="number">31</span>:<span class="number">0</span>] := a[<span class="number">127</span>:<span class="number">96</span>]</span><br><span class="line">X2[<span class="number">31</span>:<span class="number">0</span>] := a[<span class="number">95</span>:<span class="number">64</span>]</span><br><span class="line">X1[<span class="number">31</span>:<span class="number">0</span>] := a[<span class="number">63</span>:<span class="number">32</span>]</span><br><span class="line">X0[<span class="number">31</span>:<span class="number">0</span>] := a[<span class="number">31</span>:<span class="number">0</span>]</span><br><span class="line">RCON[<span class="number">31</span>:<span class="number">0</span>] := ZeroExtend(imm8[<span class="number">7</span>:<span class="number">0</span>]);</span><br><span class="line">dst[<span class="number">31</span>:<span class="number">0</span>] := SubWord(X1)</span><br><span class="line">dst[<span class="number">63</span>:<span class="number">32</span>] := (RotWord(SubWord(X1)) XOR RCON;</span><br><span class="line">dst[<span class="number">95</span>:<span class="number">64</span>] := SubWord(X3)</span><br><span class="line">dst[<span class="number">127</span>:<span class="number">96</span>] := RotWord(SubWord(X3)) XOR RCON;</span><br></pre></td></tr></table></figure>
+<p>唯一真正棘手的部分是 <code>SubWord()</code> 函数，它使用与 AES 步骤相同的查表算法。实现自定义查找表不是很有效，因此使用 <code>AESE</code> 指令实现查找表会很方便。</p>
+<p>就像使用 AES 加密一样，我使用了一个清零的轮密钥来跳过 <code>AddRoundKey</code>这一步。<code>AESE</code> 指令便只剩下使用<code>SubBytes</code> 和 <code>ShiftRows</code> 步骤用来对输入进行变换：</p>
+<blockquote>
+<p>|b0    b4    b8      b12|                    |sub(b0)    sub(b4)   sub(b8)    sub(b12)|<br>|b1    b5    b9      b13|      AESE      |sub(b5)    sub(b9)   sub(b13)  sub(b1)  |<br>|b2    b6    b10    b14|      ====&gt;     |sub(b10)  sub(b14)  sub(b2)    sub(b6) |<br>|b3    b7    b11    b15|                     |sub(b15)  sub(b3)   sub(b7)    sub(b11)|</p>
+</blockquote>
+<p>使用 NEON <code>TBL</code> 指令，我可以提取所需的字节来构建一个新的向量。在左侧，X1 是 b4、b5、b6、b7，在右侧，这些字节已移动到位置 4、1、14 和 11。同样，X3 是 b12、b13、b14、b15，这些字节已移至位置 9、6、3、12。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__m128i dest = &#123;</span><br><span class="line">    <span class="comment">// Undo ShiftRows step from AESE and extract X1 and X3</span></span><br><span class="line">    a[<span class="number">0x4</span>], a[<span class="number">0x1</span>], a[<span class="number">0xE</span>], a[<span class="number">0xB</span>], <span class="comment">// SubBytes(X1)</span></span><br><span class="line">    a[<span class="number">0x4</span>], a[<span class="number">0x1</span>], a[<span class="number">0xE</span>], a[<span class="number">0xB</span>], <span class="comment">// SubBytes(X1)</span></span><br><span class="line">    a[<span class="number">0xC</span>], a[<span class="number">0x9</span>], a[<span class="number">0x6</span>], a[<span class="number">0x3</span>], <span class="comment">// SubBytes(X3)</span></span><br><span class="line">    a[<span class="number">0xC</span>], a[<span class="number">0x9</span>], a[<span class="number">0x6</span>], a[<span class="number">0x3</span>], <span class="comment">// SubBytes(X3)</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>下一步是旋转 X1 和 X3 的字节。没有一个很好的指令来做到这一点，但是由于我已经打乱了 <code>AESE</code> 的输出，我可以再打乱一点来执行旋转：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__m128i dest = &#123;</span><br><span class="line">    <span class="comment">// Undo ShiftRows step from AESE and extract X1 and X3</span></span><br><span class="line">    a[<span class="number">0x4</span>], a[<span class="number">0x1</span>], a[<span class="number">0xE</span>], a[<span class="number">0xB</span>], <span class="comment">// SubBytes(X1)</span></span><br><span class="line">    a[<span class="number">0x1</span>], a[<span class="number">0xE</span>], a[<span class="number">0xB</span>], a[<span class="number">0x4</span>], <span class="comment">// ROT(SubBytes(X1))</span></span><br><span class="line">    a[<span class="number">0xC</span>], a[<span class="number">0x9</span>], a[<span class="number">0x6</span>], a[<span class="number">0x3</span>], <span class="comment">// SubBytes(X3)</span></span><br><span class="line">    a[<span class="number">0x9</span>], a[<span class="number">0x6</span>], a[<span class="number">0x3</span>], a[<span class="number">0xC</span>], <span class="comment">// ROT(SubBytes(X3))</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>最后，RCON 值需要是与 X1 和 X3 进行 XOR。这是最终的实现：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__m128i _mm_aeskeygenassist_si128 (__m128i a, <span class="keyword">const</span> <span class="keyword">int</span> imm8)</span><br><span class="line">&#123;</span><br><span class="line">    a = vaeseq_u8(a, (__m128i)&#123;&#125;); <span class="comment">// AESE does ShiftRows and SubBytes on A</span></span><br><span class="line">    __m128i dest = &#123;</span><br><span class="line">        <span class="comment">// Undo ShiftRows step from AESE and extract X1 and X3</span></span><br><span class="line">        a[<span class="number">0x4</span>], a[<span class="number">0x1</span>], a[<span class="number">0xE</span>], a[<span class="number">0xB</span>], <span class="comment">// SubBytes(X1)</span></span><br><span class="line">        a[<span class="number">0x1</span>], a[<span class="number">0xE</span>], a[<span class="number">0xB</span>], a[<span class="number">0x4</span>], <span class="comment">// ROT(SubBytes(X1))</span></span><br><span class="line">        a[<span class="number">0xC</span>], a[<span class="number">0x9</span>], a[<span class="number">0x6</span>], a[<span class="number">0x3</span>], <span class="comment">// SubBytes(X3)</span></span><br><span class="line">        a[<span class="number">0x9</span>], a[<span class="number">0x6</span>], a[<span class="number">0x3</span>], a[<span class="number">0xC</span>], <span class="comment">// ROT(SubBytes(X3))</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> dest ^ (__m128i)((<span class="keyword">uint32x4_t</span>)&#123;<span class="number">0</span>, rcon, <span class="number">0</span>, rcon&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># clang-6.0 -target aarch64-none-linux -march=armv8+crypto -O3</span><br><span class="line"></span><br><span class="line">00000000000000d0 &lt;_mm_aeskeygenassist_si128&gt;:</span><br><span class="line">  d0:   90000008        adrp    x8, 0 &lt;load_8&gt;</span><br><span class="line">  d4:   3dc00102        ldr     q2, [x8]</span><br><span class="line">  d8:   6f00e401        movi    v1.2d, #0x0</span><br><span class="line">  dc:   4e040fe3        dup     v3.4s, wzr</span><br><span class="line">  e0:   4e284820        aese    v0.16b, v1.16b</span><br><span class="line">  e4:   4e0c1c03        mov     v3.s[1], w0</span><br><span class="line">  e8:   4e020000        tbl     v0.16b, &#123;v0.16b&#125;, v2.16b</span><br><span class="line">  ec:   4e1c1c03        mov     v3.s[3], w0</span><br><span class="line">  f0:   6e231c00        eor     v0.16b, v0.16b, v3.16b</span><br><span class="line">  f4:   d65f03c0        ret</span><br><span class="line"></span><br><span class="line">0000000000000000 &lt;.rodata.cst16&gt;:</span><br><span class="line">        ...</span><br><span class="line">  40:   0b0e0104        .word   0x0b0e0104</span><br><span class="line">  44:   040b0e01        .word   0x040b0e01</span><br><span class="line">  48:   0306090c        .word   0x0306090c</span><br><span class="line">  4c:   0c030609        .word   0x0c030609</span><br></pre></td></tr></table></figure>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a href="https://blog.michaelbrase.com/2018/05/08/emulating-x86-aes-intrinsics-on-armv8-a/">Emulating x86 AES Intrinsics on ARMv8-A</a></p>
+<p><a href="https://blog.csdn.net/qq_32042527/article/details/88084130">Markdown表格合并单元格</a></p>
+]]></content>
+      <categories>
+        <category>AES</category>
+      </categories>
+      <tags>
+        <tag>intel AES intrinsics</tag>
+        <tag>ARMv8-A</tag>
+      </tags>
+  </entry>
 </search>
