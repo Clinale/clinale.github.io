@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"clinale.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="处理器微结构现代处理器为了增加指令的吞吐，引入了指令流水线。相比单指令周期处理器，指令流水线将一条指令的执行过程划分为多个阶段，经典的5级流水线包括：取指(Instruction Fetch, IF)、译码(Instruction Decode, ID)、执行(Execution, EX)、访存(Memory, MEM)和写回(Write Back, WB) 5个阶段。指令流水线的每个阶段都有一套">
+<meta property="og:type" content="article">
+<meta property="og:title" content="处理器指令周期测试">
+<meta property="og:url" content="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="Clinale&#39;s Blog">
+<meta property="og:description" content="处理器微结构现代处理器为了增加指令的吞吐，引入了指令流水线。相比单指令周期处理器，指令流水线将一条指令的执行过程划分为多个阶段，经典的5级流水线包括：取指(Instruction Fetch, IF)、译码(Instruction Decode, ID)、执行(Execution, EX)、访存(Memory, MEM)和写回(Write Back, WB) 5个阶段。指令流水线的每个阶段都有一套">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/5级流水线.png">
+<meta property="og:image" content="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/哈佛结构.jpg">
+<meta property="og:image" content="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/普林斯顿结构.jpg">
+<meta property="og:image" content="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/混合结构.jpg">
+<meta property="article:published_time" content="2022-11-30T14:04:02.000Z">
+<meta property="article:modified_time" content="2022-11-30T14:11:41.583Z">
+<meta property="article:author" content="Clinale">
+<meta property="article:tag" content="指令流水线">
+<meta property="article:tag" content="指令周期">
+<meta property="article:tag" content="指令峰值">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/5级流水线.png">
+
+<link rel="canonical" href="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>处理器指令周期测试 | Clinale's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Clinale's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          处理器指令周期测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-30 22:04:02 / 修改时间：22:11:41" itemprop="dateCreated datePublished" datetime="2022-11-30T22:04:02+08:00">2022-11-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%84%E7%90%86%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">处理器</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="处理器微结构"><a href="#处理器微结构" class="headerlink" title="处理器微结构"></a>处理器微结构</h4><p>现代处理器为了增加指令的吞吐，引入了指令流水线。相比单指令周期处理器，指令流水线将一条指令的执行过程划分为多个阶段，经典的5级流水线包括：取指(Instruction Fetch, IF)、译码(Instruction Decode, ID)、执行(Execution, EX)、访存(Memory, MEM)和写回(Write Back, WB) 5个阶段。指令流水线的每个阶段都有一套独立的硬件单元，因此在理想状态下，每个时钟周期每个阶段对应的硬件单元都能执行一次对应的操作，这样就形成了流水线，处理器每个时钟周期就可以完成一条指令的执行。图1展示了5级流水线指令执行过程，从第5个时钟周期开始，每个时钟周期都会完成一条指令的执行。</p>
+<span id="more"></span>
+<p><img src="/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/5级流水线.png" alt="image-20221130220009629" style="zoom: 70%;"></p>
+<p align="center">图1 5级流水线</p>
+
+<p>但是，流水线在实际执行过程中不可能一直这样流畅的执行下去，会存在以下3种冒险，阻塞流水线：</p>
+<ul>
+<li><p>结构冒险(Structural Hazard)</p>
+<p>如果一条指令需要的硬件部分还在为之前的指令工作，而无法为这条指令提供服务，那就导致了结构冒险。</p>
+</li>
+<li><p>数据冒险(Data Hazard)</p>
+<p>如果一条指令需要某数据而该数据正在被之前的指令操作，那这条指令就无法执行，从而导致了数据冒险。</p>
+</li>
+<li><p>控制冒险(Control Hazard)</p>
+<p>如果现在要执行哪条指令，是由之前指令的运行结果决定，而现在那条之前指令的结果还没产生，就导致了控制冒险。</p>
+</li>
+</ul>
+<h5 id="结构冒险-Structural-Hazard"><a href="#结构冒险-Structural-Hazard" class="headerlink" title="结构冒险(Structural Hazard)"></a>结构冒险(Structural Hazard)</h5><p>由于指令流水化，处理器在同一个时钟周期，同时运行两条指令的不同阶段。但是这两个不同的阶段，可能会用到同样的硬件电路，如果硬件无法同时支持指令的所有可能组合方式，就会出现资源冲突，从而导致结构冒险。结构冒险本质上是硬件层面的资源竞争问题，可以通过增加硬件资源来解决。</p>
+<p>典型的结构冒险的例子是内存的数据访问。由图1可知，在第$i$条指令执行到<code>访存(MEM)</code>阶段的时候，第$i+3$条指令正在执行<code>取指(IF)</code>的操作。访存和取指都要进行内存数据的读取，而内存只有一个地址译码器作为地址输入，这就意味着在一个时钟周期里内存只能读取一条数据，无法同时执行第$i$条指令的访存和第$i+3$条指令的取指操作。</p>
+<p>一种解决方案是将内存分成存放指令的程序内存和存放数据的数据内存，每块内存拥有各自的地址译码器。这样把内存拆成两部分的解决方案，在计算机体系结构里叫做哈佛结构，而与此对应的则被称为冯·诺伊曼结构，又被称为普林斯顿架构。</p>
+<table border="0" style="margin-left: auto; margin-right: auto;">
+        <tr>
+            <td align="center">
+                <!--左侧内容-->
+                <img height="150" src="/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/哈佛结构.jpg"><br>
+                图2 哈佛结构
+            </td>
+            <td align="center">
+                <!--右侧内容-->
+                <img height="150" src="/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/普林斯顿结构.jpg"><br>
+                图3 冯诺依曼结构/普林斯顿结构
+            </td>
+        </tr>
+</table>
+
+<p>然而，虽然哈佛结构能够解决资源冲突问题，但是这为程序动态分配内存带来了挑战。因此，现代处理器依然采用冯·诺伊曼体系结构，同时借鉴了哈佛结构的思想，在处理器内部的高速缓存部分进行区分，把高速缓存分成了指令缓存(Instruction Cache)和数据缓存(Data Cache)两部分。</p>
+<p><img src="/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/混合结构.jpg" style="zoom:20%;"></p>
+<p align="center">图4 现代处理器的混合结构</p>
+
+<p>内存的访问速度远比处理器的速度慢很多，现代处理器并不会直接读取主内存，而是先从主内存把指令和数据加载到高速缓存中，然后直接访问高速缓存。指令缓存和数据缓存的拆分，使得处理器在进行访存和取值时，不会再发生资源冲突的问题。</p>
+<h5 id="数据冒险-Data-Hazard"><a href="#数据冒险-Data-Hazard" class="headerlink" title="数据冒险(Data Hazard)"></a>数据冒险(Data Hazard)</h5><p>处理器中对寄存器和内存的操作包括读取(Read)和写入(Write)等2种操作，这2种操作能够组合出4个操作序列：</p>
+<ul>
+<li><p>先写后读(Read After Write, RAW)</p>
+<p>上一条指令写入寄存器或内存，下一条指令读取写入数据，两条指令间存在<code>数据依赖(Data Dependency)</code>关系，后一条指令需要等待上一条指令运行结束之后再运行。</p>
+</li>
+<li><p>先读后写(Write After Read, WAR)</p>
+<p>上一条指令读取寄存器或内存，下一条指令将新的数据写入同一个寄存器或内存，两条指令间存在<code>反依赖(Anti-Dependency)</code>关系。</p>
+</li>
+<li><p>写后再写(Write After Write, WAW)</p>
+<p>两条指令前后写入同一个寄存器，两条指令间存在<code>输出依赖(Output Dependency)</code>关系。</p>
+</li>
+<li><p>读后再读(Read After Read, RAR)</p>
+<p>两条指令前后读取同一个寄存器，无依赖关系。</p>
+</li>
+</ul>
+<p>除了<code>读后再读</code>，对于同一个寄存器或者内存地址的操作，其他3种操作序列都要求指令必须按照顺序执行。然而，指令流水线架构的核心，就是在前一个指令还没有结束的时候，开始执行后面的指令。如果一条指令的执行取决于先前指令的结果，就可能导致数据冒险。数据冒险的本质就是在同时执行的多个指令之间，存在数据依赖的情况。虽然<code>WAR</code>和<code>WAW</code>不是真正的数据相关，处理器可能会使用寄存器重命名来解决，但是尽量不要写出这样的数据相关。</p>
+<p>消除数据冒险就是要消除指令之间的数据依赖，让前后指令之间不存在数据相关。解决数据冒险的一个简单方法就是<strong>流水线停顿(Pipeline Stall)</strong>，又称<strong>流水线冒泡(Pipeline Bubbling)</strong>。在进行指令译码时，我们可以拿到指令所需要访问的寄存器和内存地址，从而就能够判断出来，这个指令是否会触发数据冒险，如果会触发数据冒险，我们可以让整个流水下停顿一个或多个周期。实际中并不是真的让流水线停下来，而是在执行后面的操作步骤之前，插入一个<code>NOP</code>操作，也就是执行一个什么也不做的操作。</p>
+<h5 id="控制冒险-Control-Hazard"><a href="#控制冒险-Control-Hazard" class="headerlink" title="控制冒险(Control Hazard)"></a>控制冒险(Control Hazard)</h5><p>分支指令及其他改变程序计数器的指令会改变指令的流向，因此转移指令本身和流水线的模式是冲突的，当对转移指令实现流水化时，可能导致控制冒险。转移指令大体分为：</p>
+<ul>
+<li><p>直接转移：<code>j target</code></p>
+<p>无条件直接跳转指令的跳转地址在取指阶段就能得到，所以流水线不用停顿。</p>
+</li>
+<li><p>间接转移：<code>jr r0</code></p>
+<p>无条件间接跳转指令在<code>译码(ID)</code>阶段得出跳转地址，流水线需停顿1个周期才能解决控制冒险。</p>
+</li>
+<li><p>条件转移：<code>beq rs, rt, imm</code></p>
+<p>条件跳转指令需要根据<code>执行(EX)</code>阶段的结果，判断是否跳转，需要等待2个周期。然而，实际上比较两个数是否相等十分简单，只需在<code>译码(ID)</code>阶段对寄存器的两个输出进行比较，从而可以将流水线停顿周期缩减为1个周期。</p>
+</li>
+</ul>
+<p>除了利用流水线停顿解决控制冒险，另外一种解决方法是<strong>延迟转移技术</strong>，其通过调整指令的顺序，将一定会执行的指令放在分支指令后面，这样流水线不会停顿。但是需要注意，调整指令顺序一定不能改变这段代码原来的意义。</p>
+<h4 id="流水线吞吐率"><a href="#流水线吞吐率" class="headerlink" title="流水线吞吐率"></a>流水线吞吐率</h4><p>指令流水线将一条指令的执行过程划分为多个阶段，每个阶段的部件可同时执行多条指令的不同部分，从而提高各部件的利用率和指令的平均执行速度。流水线的吞吐率(Throughout Put rate, TP)是指单位时间内流水线所完成的任务数量或输出的结果数量，反映了指令的平均执行速度。计算流水线吞吐率的最基本公式如下：</p>
+<script type="math/tex; mode=display">
+TP = 指令条数/流水线执行时间</script><p>通过消除指令间的结构冒险、数据冒险和控制冒险，可以测得指令的最大吞吐率 $TP_{max}$。通过消除指令间的结构冒险和控制冒险，但保留数据冒险，可以测得指令的最小吞吐率 $TP_{min}$。</p>
+<p>最大吞吐率  $TP_{max}$ 反映了指令在不存在任何冒险的情况下的计算峰值，可用于<strong>评估程序优化空间</strong>。最小吞吐率 $TP_{min}$ 反映了指令在流水线失效情况下的计算延迟，可用于<strong>计算指令时钟周期</strong>。指令时钟周期计算公式为：</p>
+<script type="math/tex; mode=display">
+指令延迟 = 1/TP_{min} \\
+指令周期 = 时钟频率 \times 指令延迟 = 时钟频率/TP_{min}</script><h4 id="指令峰值和延迟"><a href="#指令峰值和延迟" class="headerlink" title="指令峰值和延迟"></a>指令峰值和延迟</h4><p><a target="_blank" rel="noopener" href="https://github.com/MegEngine/MegPeak">MegPeak</a> 是旷视 MegEngine 团队开发的一款用于测试目标处理器指令的峰值带宽、指令延迟、内存峰值带宽和任意指令组合峰值带宽的工具，可帮助开发人员：</p>
+<ul>
+<li>绘制 Roofline Model，指导开发人员优化模型性能</li>
+<li>评估程序的优化空间</li>
+<li>探索指令组合的理论计算峰值</li>
+</ul>
+<p>有关进一步的介绍请移步<a target="_blank" rel="noopener" href="https://github.com/MegEngine/MegPeak#build">Readme</a>文档。</p>
+<p>下面是 MegPeak 测试 Arm64 上 <code>fmla</code> 指令计算峰值的核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">fmla_throughput</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">asm</span> <span class="title">volatile</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    	<span class="string">&quot;eor v0.16b, v0.16b, v0.16b\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;eor v1.16b, v1.16b, v1.16b\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        ...</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;eor v19.16b, v19.16b, v19.16b\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;mov x0, #0\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;1:\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;fmla v0.4s, v0.4s, v0.4s\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;fmla v1.4s, v1.4s, v1.4s\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        ...</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;fmla v19.4s, v19.4s, v19.4s\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;add x0, x0, #1 \n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;cmp x0, %x[RUNS] \n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;blt 1b \n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        :</span></span></span><br><span class="line"><span class="params"><span class="function">        : [RUNS] <span class="string">&quot;r&quot;</span> (megpeak::RUNS)</span></span></span><br><span class="line"><span class="params"><span class="function">        : <span class="string">&quot;cc&quot;</span>, <span class="string">&quot;v0&quot;</span>, <span class="string">&quot;v1&quot;</span>, <span class="string">&quot;v2&quot;</span>, <span class="string">&quot;v3&quot;</span>, <span class="string">&quot;v4&quot;</span>, <span class="string">&quot;v5&quot;</span>, <span class="string">&quot;v6&quot;</span>, <span class="string">&quot;v7&quot;</span>, <span class="string">&quot;v8&quot;</span>, <span class="string">&quot;v9&quot;</span>, <span class="string">&quot;v10&quot;</span>, <span class="string">&quot;v11&quot;</span>, <span class="string">&quot;v12&quot;</span>, <span class="string">&quot;v13&quot;</span>, <span class="string">&quot;v14&quot;</span>, <span class="string">&quot;v15&quot;</span>, <span class="string">&quot;v16&quot;</span>, <span class="string">&quot;v17&quot;</span>, <span class="string">&quot;v18&quot;</span>, <span class="string">&quot;v19&quot;</span>, <span class="string">&quot;x0&quot;</span>)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> megpeak::RUNS * <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的内嵌汇编代码主要做了2件事：</p>
+<ul>
+<li>初始化 0~19 号 NEON 寄存器为零，这一步不是必须的，但可以避免计算过程中出现 nan 导致的潜在影响；</li>
+<li>创建主循环，主循环中执行 <code>fmla</code> 指令，从对应的寄存器读取数据，并将计算结果写入到相同的寄存器中，同一条指令内部没有数据相关。</li>
+</ul>
+<p>下面是 MegPeak 测试 Arm64 上 <code>fmla</code> 指令延迟的核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">fmla_latency</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">asm</span> <span class="title">volatile</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    	<span class="string">&quot;eor v0.16b, v0.16b, v0.16b\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;mov x0, #0\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;1:\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;fmla v0.4s, v0.4s, v0.4s\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="comment">// 重复 20 次</span></span></span></span><br><span class="line"><span class="params"><span class="function">        ...</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;fmla v0.4s, v0.4s, v0.4s\n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;add x0, x0, #1 \n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;cmp x0, %x[RUNS] \n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="string">&quot;blt 1b \n&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="function">        :</span></span></span><br><span class="line"><span class="params"><span class="function">        : [RUNS] <span class="string">&quot;r&quot;</span> (megpeak::RUNS)</span></span></span><br><span class="line"><span class="params"><span class="function">        : <span class="string">&quot;cc&quot;</span>, <span class="string">&quot;v0&quot;</span>, <span class="string">&quot;x0&quot;</span>)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> megpeak::RUNS * <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的内嵌汇编代码中，将 <code>fmla v0.4s, v0.4s, v0.4s\n</code> 这条指令重复执行了 20 次，这样每条指令都依赖上一条指令的计算结果，所以存在严格的数据相关。通过统计执行时间和指令条数，可以计算出这条指令的计算延迟。</p>
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhizhengguan/article/details/121259357">计算机组成原理：结构冒险和数据冒险</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lfri/p/10053598.html#:~:text=%E6%8E%A7%E5%88%B6%E5%86%92%E9%99%A9%EF%BC%9A%E5%A6%82%E6%9E%9C%E7%8E%B0,%E5%AF%BC%E8%87%B4%E4%BA%86%E6%8E%A7%E5%88%B6%E5%86%92%E9%99%A9%E3%80%82">计算机组成与设计（十）—— 流水线的冒险</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/522007924">MegPeak——让你更懂你的处理器</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.specbranch.com/posts/intro-to-micro-optimization/">Introduction to Micro-Optimization</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8C%87%E4%BB%A4%E6%B5%81%E6%B0%B4%E7%BA%BF/" rel="tag"># 指令流水线</a>
+              <a href="/tags/%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F/" rel="tag"># 指令周期</a>
+              <a href="/tags/%E6%8C%87%E4%BB%A4%E5%B3%B0%E5%80%BC/" rel="tag"># 指令峰值</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/07/06/OpenSSL%20BN%20%E5%A4%A7%E6%95%B0%E5%BA%93%E5%88%86%E6%9E%90/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E5%BE%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">处理器微结构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E5%86%92%E9%99%A9-Structural-Hazard"><span class="nav-number">1.1.</span> <span class="nav-text">结构冒险(Structural Hazard)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%86%92%E9%99%A9-Data-Hazard"><span class="nav-number">1.2.</span> <span class="nav-text">数据冒险(Data Hazard)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%86%92%E9%99%A9-Control-Hazard"><span class="nav-number">1.3.</span> <span class="nav-text">控制冒险(Control Hazard)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%90%9E%E5%90%90%E7%8E%87"><span class="nav-number">2.</span> <span class="nav-text">流水线吞吐率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E5%B3%B0%E5%80%BC%E5%92%8C%E5%BB%B6%E8%BF%9F"><span class="nav-number">3.</span> <span class="nav-text">指令峰值和延迟</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Clinale"
+      src="/images/yuanshen.jpg">
+  <p class="site-author-name" itemprop="name">Clinale</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Clinale" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Clinale" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2362465844@qq.com" title="E-Mail → 2362465844@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">2021 by Clinale</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

@@ -183,6 +183,324 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">处理器指令周期测试</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-30 22:04:02 / 修改时间：22:11:41" itemprop="dateCreated datePublished" datetime="2022-11-30T22:04:02+08:00">2022-11-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%84%E7%90%86%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">处理器</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="处理器微结构"><a href="#处理器微结构" class="headerlink" title="处理器微结构"></a>处理器微结构</h4><p>现代处理器为了增加指令的吞吐，引入了指令流水线。相比单指令周期处理器，指令流水线将一条指令的执行过程划分为多个阶段，经典的5级流水线包括：取指(Instruction Fetch, IF)、译码(Instruction Decode, ID)、执行(Execution, EX)、访存(Memory, MEM)和写回(Write Back, WB) 5个阶段。指令流水线的每个阶段都有一套独立的硬件单元，因此在理想状态下，每个时钟周期每个阶段对应的硬件单元都能执行一次对应的操作，这样就形成了流水线，处理器每个时钟周期就可以完成一条指令的执行。图1展示了5级流水线指令执行过程，从第5个时钟周期开始，每个时钟周期都会完成一条指令的执行。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/11/30/ARM%E5%A4%84%E7%90%86%E5%99%A8%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F%E6%B5%8B%E8%AF%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/07/06/OpenSSL%20BN%20%E5%A4%A7%E6%95%B0%E5%BA%93%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/06/OpenSSL%20BN%20%E5%A4%A7%E6%95%B0%E5%BA%93%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-06 15:46:57" itemprop="dateCreated datePublished" datetime="2022-07-06T15:46:57+08:00">2022-07-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-07 15:02:01" itemprop="dateModified" datetime="2022-07-07T15:02:01+08:00">2022-07-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="OpenSSL-BN-大数库分析"><a href="#OpenSSL-BN-大数库分析" class="headerlink" title="OpenSSL BN 大数库分析"></a>OpenSSL BN 大数库分析</h1><h4 id="大数表示方法"><a href="#大数表示方法" class="headerlink" title="大数表示方法"></a>大数表示方法</h4><p>对于大数 $A$，其基于底层数据类型 <code>BN_ULONG</code> 可以被表示为：</p>
+<script type="math/tex; mode=display">
+A=a_m * b^m + a_{m-1}*b^{m-1}+\dots+ a_1 * b + a_0</script><p>其中，底数 $b= 1 &lt;&lt; sizeof(BN_UNLOG)$。</p>
+<p>对于 <code>LP64</code> 系统，<code>unsigned long</code> 和 <code>pointer</code> 数据类型长度为 64 比特，<strong>BN</strong> 定义了如下基本宏定义。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// crypto/bn/bn_lcl.h</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 64-bit processor with LP64 ABI</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">ifdef</span> SIXTY_FOUR_BIT_LONG</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_ULLONG       unsigned long long</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_BITS4        32</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_MASK2        (0xffffffffffffffffL)</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_MASK2l       (0xffffffffL)</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_MASK2h       (0xffffffff00000000L)</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_MASK2h1      (0xffffffff80000000L)</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_DEC_CONV     (10000000000000000000UL)</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_DEC_NUM      19                              <span class="comment">// 64-bit ~ 19-dec</span></span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_DEC_FMT1     <span class="meta-string">&quot;%lu&quot;</span></span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_DEC_FMT2     <span class="meta-string">&quot;%019lu&quot;</span></span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// include/openssl/bn.h</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">ifdef</span> SIXTY_FOUR_BIT_LONG</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_ULONG        unsigned long</span></span><br><span class="line"><span class="meta">#  <span class="meta-keyword">define</span> BN_BYTES        8</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> BN_BITS2       (BN_BYTES * 8)					<span class="comment">// 64</span></span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> BN_BITS        (BN_BITS2 * 2)					<span class="comment">// 128</span></span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> BN_TBIT        ((BN_ULONG)1 &lt;&lt; (BN_BITS2 - 1))  <span class="comment">// 1 &lt;&lt; 63</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> BN_FLG_MALLOCED         0x01</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> BN_FLG_STATIC_DATA      0x02</span></span><br></pre></td></tr></table></figure>
+<p>在定义大数的基本存储类型之后，<strong>BN</strong> 定义了 <code>BIGNUM</code> 结构体如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// crypto/bn/bn_lcl.h</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bignum_st</span> &#123;</span></span><br><span class="line">    BN_ULONG *d;                <span class="comment">/* Pointer to an array of &#x27;BN_BITS2&#x27; bit chunks. */</span></span><br><span class="line">    <span class="keyword">int</span> top;                    <span class="comment">/* Index of last used d +1. */</span></span><br><span class="line">    <span class="comment">/* The next are internal book keeping for bn_expand. */</span></span><br><span class="line">    <span class="keyword">int</span> dmax;                   <span class="comment">/* Size of the d array. */</span></span><br><span class="line">    <span class="keyword">int</span> neg;                    <span class="comment">/* one if the number is negative */</span></span><br><span class="line">    <span class="keyword">int</span> flags;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>基于上述定义的大数，其十进制表示为：</p>
+<script type="math/tex; mode=display">
+A = A.d[top] * b^{top} + A.d[top-1]*b^{top-1}+\dots+A.d[1]*b+A.d[0]</script><p>此外，在 <code>crypto/bn/bn_lcl.h</code> 文件中还定义了 <code>bn_mont_ctx_st</code> <code>bn_recp_ctx_st</code> 和 <code>bn_gencb_st</code> 三种用于大整数乘法和除法的上下文。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/06/29/SM2%E8%B0%83%E7%A0%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/29/SM2%E8%B0%83%E7%A0%94/" class="post-title-link" itemprop="url">SM2调研</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-29 09:24:56" itemprop="dateCreated datePublished" datetime="2022-06-29T09:24:56+08:00">2022-06-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-30 22:13:35" itemprop="dateModified" datetime="2022-11-30T22:13:35+08:00">2022-11-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">国密算法</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="大整数乘法"><a href="#大整数乘法" class="headerlink" title="大整数乘法"></a>大整数乘法</h4><ul>
+<li><p>基线算法</p>
+<p>使用 <strong>双精度</strong> 中间变量，算法复杂度 $O(n^2)$，进位累加次数 $n*n$</p>
+</li>
+<li><p>Comba 算法</p>
+<p>使用 <strong>三精度</strong> 中间变量，算法复杂度 $O(n^2)$，进位累加次数 $2*n$</p>
+</li>
+<li><p>Karatsuba 算法</p>
+<p>使用 <strong>分而治之</strong> 思想，算法复杂度 $O(n^{log_23}) \approx O(n^{1.585})$</p>
+</li>
+<li><p>Montgomery 算法（蒙哥马利算法）</p>
+<p>快速计算模乘、模幂运算（<a target="_blank" rel="noopener" href="https://blog.csdn.net/a675115471/article/details/107553091">蒙哥马利算法</a>）</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/29/SM2%E8%B0%83%E7%A0%94/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">Linux 远程登录常见问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-20 14:37:28 / 修改时间：15:00:59" itemprop="dateCreated datePublished" datetime="2022-06-20T14:37:28+08:00">2022-06-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="XShell-远程登陆无法使用退格键"><a href="#XShell-远程登陆无法使用退格键" class="headerlink" title="XShell 远程登陆无法使用退格键"></a>XShell 远程登陆无法使用退格键</h4><p>打开终端属性界面，点击【键盘】，将键序列改为 ASCII 127，如图所示。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/06/06/Emulating-x86-AES-Intrinsics-on-ARMv8-A/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -634,375 +952,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/yuanshen.jpg">
-      <meta itemprop="name" content="Clinale">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Clinale's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/" class="post-title-link" itemprop="url">SM4 与 AES 算法 S 盒的关系</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-09-06 18:07:55 / 修改时间：18:37:49" itemprop="dateCreated datePublished" datetime="2021-09-06T18:07:55+08:00">2021-09-06</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">国密算法</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="SM4-Sbox-结构"><a href="#SM4-Sbox-结构" class="headerlink" title="SM4-Sbox 结构"></a>SM4-Sbox 结构</h4><p>SM4-Sbox 查找表如图 1 所示。对于 S 盒的每 8 位输入，将前 4 位作为行，后 4 位作为列，输出即为查找表对应的元素。</p>
-<p><img src="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/SM4-Sbox.png" alt="image-20210906173135105"></p>
-<p align="center">图 1 SM4-Sbox 结构</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/09/06/SM4-AES-S%E7%9B%92%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/yuanshen.jpg">
-      <meta itemprop="name" content="Clinale">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Clinale's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/09/05/Markdown-%E5%B8%B8%E7%94%A8%E5%85%AC%E5%BC%8F/" class="post-title-link" itemprop="url">Markdown 常用公式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-09-05 20:00:21" itemprop="dateCreated datePublished" datetime="2021-09-05T20:00:21+08:00">2021-09-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-10 10:49:36" itemprop="dateModified" datetime="2022-04-10T10:49:36+08:00">2022-04-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Markdown/" itemprop="url" rel="index"><span itemprop="name">Markdown</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="常见公式"><a href="#常见公式" class="headerlink" title="常见公式"></a>常见公式</h4><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:left">符号</th>
-<th>规则</th>
-<th style="text-align:left">符号</th>
-<th style="text-align:left">规则</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">$T^{\prime}$</td>
-<td><code>T^&#123;\prime&#125;</code></td>
-<td style="text-align:left">$\oplus$</td>
-<td style="text-align:left"><code>\oplus</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\gets$</td>
-<td><code>\gets</code></td>
-<td style="text-align:left">$\to$</td>
-<td style="text-align:left"><code>\to</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\times$</td>
-<td><code>\times</code></td>
-<td style="text-align:left">$\div$</td>
-<td style="text-align:left"><code>\div</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\sim$</td>
-<td><code>\sim</code></td>
-<td style="text-align:left">$\approx$</td>
-<td style="text-align:left"><code>\approx</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\ll$</td>
-<td><code>\ll</code></td>
-<td style="text-align:left">$\gg$</td>
-<td style="text-align:left"><code>\gg</code></td>
-</tr>
-<tr>
-<td style="text-align:left">$\lll$</td>
-<td><code>\lll</code></td>
-<td style="text-align:left">$\mathop{\lll}\limits_{32}$</td>
-<td style="text-align:left"><code>\mathop&#123;\lll&#125;\limits_&#123;32&#125;</code></td>
-</tr>
-<tr>
-<td style="text-align:left"></td>
-<td></td>
-<td style="text-align:left"></td>
-</tr>
-</tbody>
-</table>
-</div>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/yuanshen.jpg">
-      <meta itemprop="name" content="Clinale">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Clinale's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">SM4 分组密码算法简介</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-09-05 14:56:29 / 修改时间：20:08:24" itemprop="dateCreated datePublished" datetime="2021-09-05T14:56:29+08:00">2021-09-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">国密算法</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>SM4 算法是我国商用分组密码算法，被广泛用于无线网络数据加密传输中。SM4 算法的密钥长度和分组长度均为 128 比特，解密算法是加密算法的逆运算，只需将轮密钥逆序输入即可得到明文。SM4 与 AES 算法的比较如表 1 所示。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/09/05/SM4-%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/yuanshen.jpg">
-      <meta itemprop="name" content="Clinale">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Clinale's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/" class="post-title-link" itemprop="url">Docker 部署 ThinkPHP 5.x 容器</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-07-29 20:45:36" itemprop="dateCreated datePublished" datetime="2021-07-29T20:45:36+08:00">2021-07-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-02 15:08:45" itemprop="dateModified" datetime="2021-08-02T15:08:45+08:00">2021-08-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="构建-Dockerfile-文件"><a href="#构建-Dockerfile-文件" class="headerlink" title="构建 Dockerfile 文件"></a>构建 Dockerfile 文件</h3><p>在<a target="_blank" rel="noopener" href="https://hypc.github.io/2018/10/19/docker-thinkphp/">使用 Docker 部署 thinkphp 项目</a>中，作者介绍了三点注意事项：</p>
-<blockquote>
-<ol>
-<li>thinkphp 的入口文件在 public 目录下，所以需要将<code>VirtualHost</code>的<code>DocumentRoot</code>指向 public 目录；</li>
-<li>thinkphp 需要设置伪静态，Apache 需要加载<code>mod_rewrite.so</code>模块；</li>
-<li>下载相应版本的 thinkphp 放到项目根目录下。</li>
-</ol>
-</blockquote>
-<p>并给出了如下的 Dockerfile 配置：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/29/Docker-%E9%83%A8%E7%BD%B2-thinkphp5-x-%E5%AE%B9%E5%99%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1074,20 +1023,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

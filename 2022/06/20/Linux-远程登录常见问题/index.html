@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"clinale.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="XShell 远程登陆无法使用退格键打开终端属性界面，点击【键盘】，将键序列改为 ASCII 127，如图所示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 远程登录常见问题">
+<meta property="og:url" content="https://clinale.github.io/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="Clinale&#39;s Blog">
+<meta property="og:description" content="XShell 远程登陆无法使用退格键打开终端属性界面，点击【键盘】，将键序列改为 ASCII 127，如图所示。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://clinale.github.io/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/键盘序列.png">
+<meta property="og:image" content="https://clinale.github.io/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/bash.png">
+<meta property="article:published_time" content="2022-06-20T06:37:28.000Z">
+<meta property="article:modified_time" content="2022-06-20T07:00:59.660Z">
+<meta property="article:author" content="Clinale">
+<meta property="article:tag" content="远程登陆">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://clinale.github.io/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/键盘序列.png">
+
+<link rel="canonical" href="https://clinale.github.io/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux 远程登录常见问题 | Clinale's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Clinale's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux 远程登录常见问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-20 14:37:28 / 修改时间：15:00:59" itemprop="dateCreated datePublished" datetime="2022-06-20T14:37:28+08:00">2022-06-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="XShell-远程登陆无法使用退格键"><a href="#XShell-远程登陆无法使用退格键" class="headerlink" title="XShell 远程登陆无法使用退格键"></a>XShell 远程登陆无法使用退格键</h4><p>打开终端属性界面，点击【键盘】，将键序列改为 ASCII 127，如图所示。</p>
+<span id="more"></span>
+<p><img src="/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/键盘序列.png" alt="img" style="zoom: 70%;"></p>
+<p>点击【确定】后，退格键即可正常使用。</p>
+<h4 id="远程登陆无法使用-Tab-补全键"><a href="#远程登陆无法使用-Tab-补全键" class="headerlink" title="远程登陆无法使用 Tab 补全键"></a>远程登陆无法使用 Tab 补全键</h4><p>Ubuntu 系统将默认的 bash shell 更换为了 <em>dash</em>。其表现是 <em>/bin/sh</em> 链接到了 <em>/bin/dash</em>，而不是传统的 <em>/bin/bash</em>。</p>
+<p>一种解决办法是手动将 <em>/bin/sh</em> 软连接到 <em>/bin/bash</em>，不过此操作对所有用户生效，谨慎操作。</p>
+<p>另外一种方法是修改 <em>/etc/passwd</em> 配置文件，将远程登陆用户的默认 shell 手动改为 <em>/bin/bash</em>。(<strong>推荐</strong>)</p>
+<p><img src="/2022/06/20/Linux-%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/bash.png" alt="image-20220620145156339"></p>
+<p>有关 <em>/etc/passwd</em> 配置文件的详细介绍请参考博客 <a target="_blank" rel="noopener" href="https://www.sohu.com/a/320177323_505901">Linux中/etc/passwd配置文件详解</a>。</p>
+<h4 id="xxx-is-not-in-the-sudoers-file"><a href="#xxx-is-not-in-the-sudoers-file" class="headerlink" title="xxx is not in the sudoers file."></a>xxx is not in the sudoers file.</h4><p>以 <strong>root</strong> 用户身份打开 <em>/etc/sudoers</em> 文件，找到 <code>root    ALL=(ALL)    ALL</code> 这一行，然后在下面添加一行本机账户的权限设置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Allow root to run any commands anywhere</span></span><br><span class="line">root	ALL=(ALL)	ALL</span><br><span class="line">wang	ALL=(ALL)	ALL <span class="comment"># wang 是本机账户</span></span><br></pre></td></tr></table></figure>
+<p>保存退出即可生效。</p>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35663625/article/details/104632593">Ubuntu16.04系统用Xshell远程连接后无法使用tab补全键</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43871519/article/details/109080643">xshell退格键无法使用的解决方法</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42919323/article/details/106821961">is not in the sudoers file</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86/" rel="tag"># 远程登陆</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/06/Emulating-x86-AES-Intrinsics-on-ARMv8-A/" rel="prev" title="Emulating x86 AES Intrinsics on ARMv8-A">
+      <i class="fa fa-chevron-left"></i> Emulating x86 AES Intrinsics on ARMv8-A
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/29/SM2%E8%B0%83%E7%A0%94/" rel="next" title="SM2调研">
+      SM2调研 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#XShell-%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E9%80%80%E6%A0%BC%E9%94%AE"><span class="nav-number">1.</span> <span class="nav-text">XShell 远程登陆无法使用退格键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8-Tab-%E8%A1%A5%E5%85%A8%E9%94%AE"><span class="nav-number">2.</span> <span class="nav-text">远程登陆无法使用 Tab 补全键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xxx-is-not-in-the-sudoers-file"><span class="nav-number">3.</span> <span class="nav-text">xxx is not in the sudoers file.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Clinale"
+      src="/images/yuanshen.jpg">
+  <p class="site-author-name" itemprop="name">Clinale</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Clinale" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Clinale" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2362465844@qq.com" title="E-Mail → 2362465844@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">2021 by Clinale</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
