@@ -183,6 +183,91 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2021/12/13/Linux-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/13/Linux-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7/" class="post-title-link" itemprop="url">Linux 创建远程登陆用户</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-12-13 10:47:23 / 修改时间：11:20:15" itemprop="dateCreated datePublished" datetime="2021-12-13T10:47:23+08:00">2021-12-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="开启远程登陆"><a href="#开启远程登陆" class="headerlink" title="开启远程登陆"></a>开启远程登陆</h4><ul>
+<li><p>修改 SSH 配置文件</p>
+<p>修改配置文件 <code>/etc/ssh/sshd_config</code> 以下字段：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置允许远程登录</span></span><br><span class="line">PasswordAuthentication yes</span><br><span class="line">PermitRootLogin yes</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增 root 远程账户</span></span><br><span class="line">AllowUsers root</span><br><span class="line">AllowUsers &lt;user&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，<em><user></user></em> 为后续添加的其他远程登录账户。 </p>
+</li>
+<li><p>重启 SSH 服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
+<p>重启完成之后即可借助远程连接工具连接到该远程服务器。</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/13/Linux-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2021/12/06/Linux-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE-WIFI/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -781,20 +866,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -829,7 +914,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
