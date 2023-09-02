@@ -183,6 +183,110 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2023/09/02/%E7%8E%A9%E8%BD%AC%E6%A0%91%E8%8E%93%E6%B4%BE-%E8%87%AA%E5%8A%A8%E4%B8%8A%E6%8A%A5IP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/yuanshen.jpg">
+      <meta itemprop="name" content="Clinale">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Clinale's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/09/02/%E7%8E%A9%E8%BD%AC%E6%A0%91%E8%8E%93%E6%B4%BE-%E8%87%AA%E5%8A%A8%E4%B8%8A%E6%8A%A5IP/" class="post-title-link" itemprop="url">玩转树莓派-自动上报IP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-09-02 23:19:03 / 修改时间：23:45:24" itemprop="dateCreated datePublished" datetime="2023-09-02T23:19:03+08:00">2023-09-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%A0%91%E8%8E%93%E6%B4%BE/" itemprop="url" rel="index"><span itemprop="name">树莓派</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="玩转树莓派-自动上报IP"><a href="#玩转树莓派-自动上报IP" class="headerlink" title="玩转树莓派 | 自动上报IP"></a>玩转树莓派 | 自动上报IP</h1><h3 id="安装和配置mutt-和-msmtp"><a href="#安装和配置mutt-和-msmtp" class="headerlink" title="安装和配置mutt 和 msmtp"></a>安装和配置mutt 和 msmtp</h3><p><code>mutt</code> 和 <code>msmtp</code> 是两个常用的邮件客户端和 SMTP（简单邮件传输协议）工具。它们通常被一起使用来发送和接收电子邮件。</p>
+<ol>
+<li><code>mutt</code>:<ul>
+<li>mutt 是一个文本模式的邮件客户端，它提供了一个基于终端的用户界面，可以在 Linux 上以命令行方式使用。</li>
+<li>mutt 支持多种邮件协议，包括 POP3 和 IMAP，因此可以使用它来连接到不同的邮件服务器来接收和阅读邮件。</li>
+<li>mutt 具有丰富的配置选项和自定义功能，可以通过编辑配置文件进行优化和修改。可以设置邮箱、签名、邮件过滤规则等。</li>
+</ul>
+</li>
+<li><code>msmtp</code>:<ul>
+<li><code>msmtp</code> 是一个用于发送邮件的 SMTP 客户端工具，它允许通过外部的 SMTP 服务器发送电子邮件。</li>
+<li><code>msmtp</code> 配合 <code>mutt</code> 使用时特别方便，因为 <code>mutt</code> 默认不包含 SMTP 邮件发送功能，而 <code>msmtp</code> 可以作为其外部的 SMTP 发送器。</li>
+<li><code>msmtp</code> 配置简单，只需编辑一个配置文件，并在其中指定 SMTP 服务器的详细信息，如服务器地址、端口、用户名和密码等。</li>
+</ul>
+</li>
+</ol>
+<p>执行如下命令安装 mutt 和 msmtp：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install -y mutt msmtp</span><br></pre></td></tr></table></figure>
+<p>安装后，先配置 <code>msmtp</code>，在 <code>/etc</code>目录下创建文件 <code>msmtprc</code>（该配置为所有用户生效，如果仅对当前用户生效，仅需创建 <code>~/.msmtprc</code>文件，<strong>不推荐后一种</strong>）。<code>msmtprc</code>配置文件内容为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">account default</span><br><span class="line">host smtp.qq.com</span><br><span class="line">from xxx@foxmail.com</span><br><span class="line">auth plain</span><br><span class="line">user xxx@foxmail.com</span><br><span class="line">password your_password</span><br><span class="line">logfile /var/<span class="built_in">log</span>/msmtp.log</span><br></pre></td></tr></table></figure>
+<p>其中，<code>smtp.qq.com</code>是我使用的邮箱的SMTP服务器地址，<code>xxx@foxmail.com</code>是我用于发送邮件的邮箱，<code>your_password</code>是邮箱密码，你要根据你的情况修改。由于 <code>msmtprc</code> 中包含密码，因此需要设置只读：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod 600 /etc/msmtprc</span><br></pre></td></tr></table></figure>
+<p>然后配置 <code>mutt</code>。在<code>/etc</code>目录下创建文件<code>muttrc</code>（或者在当前用户的目录下创建文件 <code>.muttrc</code>，仅对当前用户生效），内容如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> sendmail=<span class="string">&quot;/usr/bin/msmtp&quot;</span></span><br><span class="line"><span class="built_in">set</span> use_from=yes</span><br><span class="line"><span class="built_in">set</span> realname=<span class="string">&quot;Alarm&quot;</span></span><br><span class="line"><span class="built_in">set</span> editor=<span class="string">&quot;vim&quot;</span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>realname</code>是发件人的名字，接收到的邮件中会显示出来。</p>
+<h3 id="获取-IP-和-SSID"><a href="#获取-IP-和-SSID" class="headerlink" title="获取 IP 和 SSID"></a>获取 IP 和 SSID</h3><p>树莓派开机自动上报的内容包括 <code>IP</code> 和连接的 WIFI 名称，其一般步骤为：</p>
+<ol>
+<li>开机时执行一个脚本，检测网络可用性</li>
+<li>网络通畅后获取自己的IP地址和网络名称</li>
+<li>发送邮件到指定的邮箱。</li>
+</ol>
+<p>根据上述思路，<code>send-ip-mail.sh</code>脚本内容如下：</p>
+<figure class="highlight bash"><figcaption><span>&#123;.line-numbers&#125;</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># check network availability</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  TIMEOUT=5</span><br><span class="line">  SITE_TO_CHECK=<span class="string">&quot;www.baidu.com&quot;</span></span><br><span class="line">  RET_CODE=`curl -I -s --connect-timeout <span class="variable">$TIMEOUT</span> <span class="variable">$SITE_TO_CHECK</span> -w %&#123;http_code&#125; | tail -n1`</span><br><span class="line">  <span class="keyword">if</span> [ <span class="string">&quot;x<span class="variable">$RET_CODE</span>&quot;</span> = <span class="string">&quot;x200&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Network OK, will send mail...&quot;</span></span><br><span class="line">  <span class="built_in">break</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Network not ready, wait...&quot;</span></span><br><span class="line">  sleep 1s</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get the IP address of wlan1, e.g. &quot;192.168.16.5&quot;</span></span><br><span class="line">ETH0_IP_ADDR=`ifconfig wlan1 | sed -n <span class="string">&quot;2,2p&quot;</span> | awk <span class="string">&#x27;&#123;print substr($2,1)&#125;&#x27;</span>`</span><br><span class="line">ESSID=`sudo iwconfig wlan1 | grep ESSID | awk <span class="string">&#x27;&#123;print substr($4,1)&#125;&#x27;</span>`</span><br><span class="line"><span class="comment"># send the Email</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Current time: `date &#x27;+%F %T&#x27;`. Enjoy it&quot;</span> | mutt -s <span class="string">&quot;<span class="variable">$&#123;ESSID&#125;</span> IP: <span class="variable">$ETH0_IP_ADDR</span>&quot;</span> xxx@foxmail.com</span><br></pre></td></tr></table></figure>
+<p>其中，<code>wlan1</code>为树莓派无线网卡，<code>xxx@foxmail.com</code>为要发送的目的地址。</p>
+<h4 id="开机自动上报-IP"><a href="#开机自动上报-IP" class="headerlink" title="开机自动上报 IP"></a>开机自动上报 IP</h4><p>为了实现开机自动 IP，需要将上述 <code>send-ip-mail.sh</code> 脚本放在 <code>/etc/rc.local</code> 中，只需一行即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/etc/rc.local</span></span><br><span class="line">su pi -c <span class="string">&quot;sudo /home/pi/send-ip-mail.sh &gt;&gt; /root/data/source/send-ip-mail.log 2&gt;&amp;1&quot;</span></span><br><span class="line">...</span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+<p>其中，<code>su</code> 命令是指定在 <code>pi</code> 用户下执行这条命令，<code>-c</code> 表示执行完这条命令之后恢复原来的用户。</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a target="_blank" rel="noopener" href="https://shumeipai.nxez.com/2014/03/18/let-raspberry-pi-ip-address-is-automatically-reported-to-the-mailbox.html">让树莓派自动上报IP地址到邮箱</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2023/09/02/%E7%8E%A9%E8%BD%AC%E6%A0%91%E8%8E%93%E6%B4%BE-24%E5%B0%8F%E6%97%B6%E6%97%A0%E4%BA%BA%E7%9B%B4%E6%92%AD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -885,81 +989,6 @@ A = A.d[top] * b^{top} + A.d[top-1]*b^{top-1}+\dots+A.d[1]*b+A.d[0]</script><p>�
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://clinale.github.io/2022/04/10/NEON-%E6%8C%87%E4%BB%A4%E9%80%9F%E6%9F%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/yuanshen.jpg">
-      <meta itemprop="name" content="Clinale">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Clinale's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/10/NEON-%E6%8C%87%E4%BB%A4%E9%80%9F%E6%9F%A5/" class="post-title-link" itemprop="url">NEON 指令速查</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-04-10 10:11:03 / 修改时间：10:29:43" itemprop="dateCreated datePublished" datetime="2022-04-10T10:11:03+08:00">2022-04-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/NEON/" itemprop="url" rel="index"><span itemprop="name">NEON</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="NEON-指令速查"><a href="#NEON-指令速查" class="headerlink" title="NEON 指令速查"></a>NEON 指令速查</h4><p>以下是 NEON 指令，所在头文件为 <code>&lt;arm_neon.h&gt;</code>。包含部分 NEON 与 SSE 对应关系。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/04/10/NEON-%E6%8C%87%E4%BB%A4%E9%80%9F%E6%9F%A5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1031,7 +1060,7 @@ A = A.d[top] * b^{top} + A.d[top-1]*b^{top-1}+\dots+A.d[1]*b+A.d[0]</script><p>�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1044,7 +1073,7 @@ A = A.d[top] * b^{top} + A.d[top-1]*b^{top-1}+\dots+A.d[1]*b+A.d[0]</script><p>�
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">37</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
